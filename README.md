@@ -1,12 +1,26 @@
-# AdminLTE-CRUD-With-Codeigniter
-CRUD dengan Template Admin LTE menggunakan Codeigniter
+# APLIKASI PILKADES SERENTAK (non e-Voting)
+
+Dibuat menggunakan:
+- Codeigniter
+- Bootstrap
+- AdminLTE2
+- PHPExcel/PHPOffice
+- mPDF
+- jQuery/AJAX
+- ChartJS
+- DataTable
+- dll
+
 
 Fitur : 
-  1. CRUD with Ajax
-  2. Datatable
-  3. Export dan Import ke Excel
-  4. Chart
+- Multi level user
+- CRUD dengan Ajax
+- Datatable
+- Export ke format Excel
+- Cetak laporan ke format Excel dan PDF
+- Pie/Bar Chart
+- Time Schedule (tahapan pengolahan data terjadwal)
   
-Akun Login :
-  1. username : auwfar / password : auwfar
-  2. username : ozil / password : ozil
+Demo Account:
+1. username : admin / password : admin123
+2. username : operator / password : operator123
