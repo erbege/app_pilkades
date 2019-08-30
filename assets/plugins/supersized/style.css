@@ -1,0 +1,103 @@
+.bx-content h2, .bx-content h3{
+    font-size: 120px;
+    position: relative;
+    z-index: 300;
+    color: #fff;
+    padding: 20px 30px 0px;
+    font-family: 'Miltonian';
+    text-align: center;
+    text-shadow: 0px 0px 1px rgba(255,255,255,0.9), 1px 2px 5px rgba(0,0,0,0.5);
+}
+.bx-content h3{
+    font-size: 60px;
+}
+.bx-container{
+	position:fixed;
+	top:0px;
+	left:0px;
+	width:100%;
+	height:100%;
+	z-index:0;
+}
+.bx-container img{
+	position:absolute;
+	top:0px;
+	left:0px;
+	width:100%;
+	z-index: 101;
+	display:none;
+}
+.bx-canvas{
+	position:absolute;
+	top:0px;
+	left:0px;
+	width:100%;
+}
+.bx-overlay, .bx-loading {
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	background: transparent url(../images/pattern.png) repeat top left;
+	z-index:10;
+}
+.bx-loading{
+    z-index: 9999;
+    background: #000;
+}
+.bx-loading span{
+    color: #fff;
+    font-size: 13px;
+    position: fixed;
+    font-family: Arial, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 8px;
+    margin: -12px 0 0 -46px;
+    left: 50%;
+    top: 50%;
+    text-shadow: 0px 0px 1px rgba(255,255,255,0.9), 1px 2px 5px rgba(0,0,0,0.5);
+}
+.bx-thumbs{
+    position:absolute;
+    z-index: 100;   
+    bottom: 50px;
+    left: 50%;
+    margin-left: -294px; /*half of width for centering*/
+}
+.bx-thumbs a{
+    float: left;
+    width: 66px;
+    height: 66px;
+    border: 2px solid #000;
+    overflow: hidden;
+    margin: 2px 7px;
+    position: relative;
+    outline: none;
+    cursor: pointer;
+    background-repeat: no-repeat;
+    background-position: center center;
+    opacity: 0.8;
+    border-radius: 34px;
+    -webkit-border-radius: 34px;
+    -moz-border-radius: 34px;
+	box-shadow: 
+        0px 0px 3px rgba(0,0,0,0.6),
+        0px 0px 0px 40px rgba(0,0,0,0.3) inset;
+    -webkit-transition: all 0.4s ease-in-out;
+	-moz-transition: all 0.4s ease-in-out;
+	-o-transition: all 0.4s ease-in-out;
+	-ms-transition: all 0.4s ease-in-out;
+	transition: all 0.4s ease-in-out;
+}
+.bx-thumbs a:hover{
+    opacity: 1.0;
+    box-shadow: 
+        0px 0px 3px rgba(0,0,0,0.6),
+        0px 0px 0px 0px rgba(0,0,0,0.1) inset;
+}
+.bx-thumbs a.bx-thumbs-current{
+    opacity: 1.0;
+    border-color: #fff;
+    box-shadow: 0px 0px 3px rgba(0,0,0,0.6);
+}
