@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="<?php echo base_url(); ?>assets/breadcrumb.css">
 
 <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet"> 
+<link href="https://fonts.googleapis.com/css?family=Righteous&display=swap" rel="stylesheet">
 
 <style type="text/css">
 /* table, th, td {
@@ -73,11 +74,11 @@ tbody tr:hover {
   width: 28px;
   height: 28px;
   padding: 2px;
-  background: #222d32;
-  border: 2px solid #fff;
-  color: #fff;
+  background: #fff;
+  border: 2px solid #666;
+  color: #000;
   text-align: center;
-  font: 18px "Lato", sans-serif;
+  font-family: 'Righteous', cursive;
   margin: 0 auto;
 }
 .namaCalon {
