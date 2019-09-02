@@ -72,20 +72,31 @@
     	<div class="table-responsive">
     		<!-- <table class="table table-bordered table-hovered table-condensed" id="table_id">  -->
             <div class="col-md-12">
+            <!-- <table id="table" class=" table-condensed table-bordere table-hover" cellspacing="0" width="100%"> -->
             <table class="table table-hover table-condensed" id="table">
         		<thead>
                     <tr>
-                        <th>No</th>
-            			<th>Nama Calon</th>
-                        <th>Desa Pemilihan</th>
-                        <th>Perolehan Suara</th>
-            			<th style="width:50px;">Aksi</th>
+                        <th rowspan="2">No</th>
+            			<th rowspan="2">Desa</th>
+                        <th rowspan="2">DPT</th>
+                        <th colspan="4" class="text-center">Surat Suara</th>
+                        <th rowspan="2">Partisipasi (%)</th>
+            			<th rowspan="2" style="width:50px;">Aksi</th>
             		</tr>
+                    <tr>
+                        <th>Sah</th>
+                        <th>Tidak Sah</th>
+                        <th>Tidak Digunakan</th>
+                        <th>Jumlah</th> 
         		</thead>
         		<tbody>
                 </tbody>
                 <tfoot>
                     <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                         <th></th>
                         <th></th>
                         <th></th>
@@ -110,6 +121,7 @@
 var save_method; //for save method string
 var table;
 var base_url = '<?php echo base_url();?>';
+var kodes = '';
 
 $(document).ready(function() {
 
@@ -127,15 +139,47 @@ $(document).ready(function() {
             };
  
             // computing column Total of the complete result 
-            var suaraTotal = api
+            var totalDPT = api
+                .column( 2 )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+
+            var totalSah = api
                 .column( 3 )
                 .data()
                 .reduce( function (a, b) {
                     return intVal(a) + intVal(b);
                 }, 0 );
 
-            $( api.column( 2 ).footer() ).html('Total');
-            $( api.column( 3 ).footer() ).html(suaraTotal);
+            var totalTdkSah = api
+                .column( 4 )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+
+            var totalTdkDipakai = api
+                .column( 5 )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+
+            var totalJumlah = api
+                .column( 6 )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+
+            $( api.column( 1 ).footer() ).html('Total');
+            $( api.column( 2 ).footer() ).html(totalDPT);
+            $( api.column( 3 ).footer() ).html(totalSah);
+            $( api.column( 4 ).footer() ).html(totalTdkSah);
+            $( api.column( 5 ).footer() ).html(totalTdkDipakai);
+            $( api.column( 6 ).footer() ).html(totalJumlah);
         },
         "language": {
             "decimal": ",",
@@ -163,13 +207,38 @@ $(document).ready(function() {
                 "orderable": false, //set not orderable
             },
             { 
-                "targets": [ -2 ], //2 last column (photo)
+                "targets": [ -3 ], //2 last column (photo)
                 "orderable": false, //set not orderable
             },
+            {
+                className: "dt-right","targets": [ 2, 3, 4, 5, 6, 7],
+            }
 
         ],
 
     });
+
+    // hitung otomatis jumlah surat suara tidak terpakai
+    var input1 = document.getElementById('suratsuara');
+    var input2 = document.getElementById('sssah');
+    var input3 = document.getElementById('sstdksah');
+    var input4 = document.getElementById('sstidakterpakai');
+
+    input1.addEventListener('change', function() {
+    input4.value = parseInt(input1.value)-(parseInt(input2.value)+parseInt(input3.value));
+    });
+
+    input2.addEventListener('change', function() {
+    input4.value = parseInt(input1.value)-(parseInt(input2.value)+parseInt(input3.value));
+    });
+
+    input3.addEventListener('change', function() {
+    input4.value = parseInt(input1.value)-(parseInt(input2.value)+parseInt(input3.value));
+    });
+
+    // hitung otomatis jumlah perolehan suara semua calon
+    var isi1 = 
+
 
     // nested
     $("#kdkec").change(function (){
@@ -234,6 +303,60 @@ $(document).ready(function() {
     })  
 });
 
+function load_data_calon(kode)
+    {
+    $.ajax({
+      url:"<?php echo base_url(); ?>hasil/load_data/" + kode,
+      dataType:"JSON",
+      success:function(data){
+        var jumlah = 0;
+        var html = '';
+
+        var inputss = document.getElementById('sssah');
+
+        for(var count = 0; count < data.length; count++)
+        {
+          html += '<tr>';
+          html += '<th class="table_data" data-row_id="'+data[count].id+'" data-column_name="nourut" width="40px">'+data[count].nourut+'</th>';
+          html += '<th class="table_data" data-row_id="'+data[count].id+'" data-column_name="nama">'+data[count].nama+'</th>';
+          //html += '<td align="right" class="table_data" data-row_id="'+data[count].id+'" data-column_name="s_hasil" contenteditable style="background-color: #eee">'+data[count].s_hasil+'</td>';
+          html += '<td><input id="angka" type="number" min="0" step="1" style="width: 80px" class="table_data pull-right" data-row_id="'+data[count].id+'" data-column_name="s_hasil" value="'+data[count].s_hasil+'"></td>';
+          html += '</tr>';
+          jumlah = jumlah + parseInt(data[count].s_hasil);
+        }
+        html += '<tr>';
+        html += '<td></td>';
+        html += '<td align="right"><b>Jumlah</b></td>';
+        if (parseInt(inputss.value) == jumlah ) {
+            //html += '<td align="right" id="jmlSuaraCalon" class="text-success"><b>'+jumlah+'</b></td>';
+            html += '<td><input type="text" id="jmlSuaraCalon" class="jmlSuaraCalon text-success pull-right" value="'+jumlah+'" readonly="true" style="width: 80px" ></td>';
+        } else {
+            //html += '<td align="right" id="jmlSuaraCalon" class="text-danger"><b>'+jumlah+'</b>';
+            html += '<td><input type="text" id="jmlSuaraCalon" class="jmlSuaraCalon text-danger pull-right " value="'+jumlah+'" readonly="true" style="width: 80px" ></td>';
+        }
+
+        html += '</tr>';
+        $('#table_calon tbody').html(html);
+      }
+    });
+  }
+
+$(document).on('blur', '.table_data', function(){
+var id = $(this).data('row_id');
+var table_column = $(this).data('column_name');
+//var value = $(this).text();
+var value = $(this).val();
+$.ajax({
+  url:"<?php echo base_url(); ?>hasil/update_hasil",
+  method:"POST",
+  data:{id:id, table_column:table_column, value:value},
+  success:function(data)
+  {
+    load_data_calon(kodes);
+    //alert('sukses coyyy ' + kodes);
+  }
+})
+});
 
 function edit_person(id)
 {
@@ -251,45 +374,30 @@ function edit_person(id)
         success: function(data)
         {
             $('[name="id"]').val(data.id);
-            $('[name="nama"]').val(data.nama);
-            $('[name="tmp_lahir"]').val(data.tmp_lahir);
-            $('[name="tgl_lahir"]').datepicker('update',data.tgl_lahir);
-            $('[name="kelamin"]').val(data.kelamin);
-            $('[name="agama"]').val(data.agama);
-            $('[name="alamat1"]').val(data.alamat1);
-            $('[name="id_pendidikan"]').val(data.id_pendidikan);
-            $('[name="id_pekerjaan"]').val(data.id_pekerjaan);
-            $('[name="id_pekerjaan"]').selectedIndex = data.id_pekerjaan;
-            $('[name="organisasi"]').val(data.organisasi);
-            $('[name="keterangan"]').val(data.keterangan);
+            $('[name="suratsuara"]').val(data.suratsuara);
             
-            $('[name="id_kab"]').val(data.kdkab);
-            $('[name="kdkec"]').val(data.kdkec);
-            $('[name="kddesa"]').val(data.kddesa);
+            // kalo ss = 0 isi otomatis sesuai perhitungan 
+            // if (data.suratsuara == 0) {
+            //     $('[name="suratsuara"]').val(parseInt(parseInt(data.dpt_jml)+((parseInt(data.dpt_jml)*2.5)/100)));
+            // } else {
+            //     $('[name="suratsuara"]').val(data.suratsuara);
+            // }
+
+            $('[name="sssah"]').val(data.sssah);
+            $('[name="sstdksah"]').val(data.sstdksah);
+            $('[name="sstidakterpakai"]').val(data.sstidakterpakai);
+
             $('[name="nama_desa"]').val(data.nama_desa);
             $('[name="nama_kec"]').val(data.nama_kec);
             $('[name="thn_pemilihan"]').val(data.thn_pemilihan);
-            $('[name="s_hasil"]').val(data.s_hasil);
 
             $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
-            $('.modal-title').text('Hasil Perolehan Suara'); // Set title to Bootstrap modal title
+            $('.modal-title').text('Input Hasil Pilkades'); // Set title to Bootstrap modal title
 
-            $('#photo-preview').show(); // show photo preview modal
+            // simpan kode desa ke variabel global
+            kodes = data.kddesa;
 
-            if(data.photo)
-            {
-                $('#label-photo').text('Change Photo'); // label photo upload
-                $('#photo-preview div').html('<img src="'+base_url+'upload/'+data.photo+'" class="img-responsive">'); // show photo
-                $('#photo-preview div').append('<input type="checkbox" class="minimal" name="remove_photo" value="'+data.photo+'"/> Hapus photo saat menyimpan'); // remove photo
-
-            }
-            else
-            {
-                $('#label-photo').text('Upload Photo'); // label photo upload
-                $('#photo-preview div').text('(No photo)');
-            }
-
-
+            load_data_calon(data.kddesa);
         },
         error: function (jqXHR, textStatus, errorThrown)
         {
@@ -305,7 +413,7 @@ function reload_table()
 
 function save()
 {
-    $('#btnSave').text('saving...'); //change button text
+    $('#btnSave').text('Meyimpan...'); //change button text
     $('#btnSave').attr('disabled',true); //set button disable 
     var url;
 
@@ -341,7 +449,7 @@ function save()
                     $('[name="'+data.inputerror[i]+'"]').next().text(data.error_string[i]); //select span help-block class set text error string
                 }
             }
-            $('#btnSave').text('save'); //change button text
+            $('#btnSave').text('Simpan'); //change button text
             $('#btnSave').attr('disabled',false); //set button enable 
 
 
@@ -349,11 +457,13 @@ function save()
         error: function (jqXHR, textStatus, errorThrown)
         {
             alert('Error adding / update data');
-            $('#btnSave').text('save'); //change button text
+            $('#btnSave').text('Simpan'); //change button text
             $('#btnSave').attr('disabled',false); //set button enable 
 
         }
     });
+
+    
 }
 
 </script>
@@ -369,39 +479,72 @@ function save()
             <div class="modal-body form">
                 <form action="#" id="form" class="form-horizontal">
                     <input type="hidden" value="" name="id"/> 
-                    
                     <div class="form-body">
+                
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="nama_kec">Kecamatan</label>
+                                <input type="email" class="form-control" id="nama_kec" name="nama_kec" readonly="true">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="nama_desa">Desa</label>
+                                <input type="text" class="form-control" id="nama_desa" name="nama_desa" readonly="true">
+                            </div>
+                        </div>
+                        <div class="clearfix"><hr /></div>
                         
-                        <div class="form-group">
-                            <label class="control-label col-md-4">Desa / Kecamatan</label>
-                            <div class="col-md-4">
-                                <input name="nama_desa" placeholder="Nama Desa" class="form-control" type="text" readonly="readonly">
-                                <span class="help-block"></span>
-                            </div>
-                            <div class="col-md-4">
-                                <input name="nama_kec" placeholder="Nama Kec" class="form-control" type="text" readonly="readonly">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="suratsuara">Jml Surat Suara</label>
+                                <input type="number" step="1" min="0" class="form-control" id="suratsuara" name="suratsuara">
                                 <span class="help-block"></span>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-4">Nama Calon Kepala Desa</label>
-                            <div class="col-md-8">
-                                <input name="nama" placeholder="Nama Lengkap" class="form-control" type="text" readonly="readonly">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="sssah">Sah</label>
+                                <input type="number" step="1" min="0" class="form-control" id="sssah" name="sssah">
                                 <span class="help-block"></span>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-4">Perolehan Suara</label>
-                            <div class="col-md-3">
-                                <input name="s_hasil" placeholder="Suara" class="form-control" type="number" min="0">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="sstdksah">Tidak Sah</label>
+                                <input type="number" step="1" min="0" class="form-control" id="sstdksah" name="sstdksah">
                                 <span class="help-block"></span>
                             </div>
                         </div>
-                        
-                    </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="sstidakterpakai">Tidak Terpakai</label>
+                                <input type="number" step="1" min="0" class="form-control" id="sstidakterpakai" name="sstidakterpakai">
+                                <span class="help-block"></span>
+                            </div>
+                        </div>
+                        <!-- <div class="col-sm-12 well well-sm">
+                            <p class="text-muted">Klik pada area abu-abu di sebelah kanan nama masing-masing calon di bawah ini untuk mengisi perolehan suara</p>
+                        </div> -->
+
+                        <div class="col-sm-12">
+                            <p class="lead">Perolehan Suara Calon</p>
+                            <div class="table-responsive">
+                                <table id="table_calon" class="table table-condensed">
+                                    <thead>
+                                    
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div> <!-- /.table-reponsive -->
+                        </div>
+
+                    </div> <!-- /.form-body -->
                 </form>
             </div>
             <div class="modal-footer">
+
                 <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Save</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
             </div>
