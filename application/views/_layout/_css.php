@@ -15,6 +15,8 @@
 <!-- Custom -->
 <link rel="stylesheet" href="<?php echo base_url(); ?>assets/breadcrumb.css">
 
+<link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet"> 
+
 <style type="text/css">
 /* table, th, td {
     border: 1px solid #C0C0C0;
@@ -44,4 +46,66 @@ tbody tr:hover {
     padding: 3px;
     border: 3px solid #d2d6de;
 }
+
+.calon-img-frame {
+    margin-top: 10px;
+}
+
+.numberCircle {
+  border-radius: 50%;
+  behavior: url(PIE.htc);
+  /* remove if you don't care about IE8 */
+  width: 45px;
+  height: 45px;
+  padding: 2px;
+  background: #fff;
+  border: 2px solid #666;
+  color: #666;
+  text-align: center;
+  font: 32px Arial, sans-serif;
+  margin: 0 auto;
+}
+
+.numberCircleSmall {
+  border-radius: 30%;
+  behavior: url(PIE.htc);
+  /* remove if you don't care about IE8 */
+  width: 28px;
+  height: 28px;
+  padding: 2px;
+  background: #222d32;
+  border: 2px solid #fff;
+  color: #fff;
+  text-align: center;
+  font: 18px "Lato", sans-serif;
+  margin: 0 auto;
+}
+.namaCalon {
+  font-family: 'Lato',sans-serif;
+  font-size: 16pt;  
+  font-weight: bold;
+  color: #d73925;
+}
+
+.detailCalon {
+  font-family: 'Lato',sans-serif;
+  font-size: 11pt;  
+  font-weight: normal;
+  line-height: 1.8em;
+}
+
+.detailCalonText {
+  font-weight: bold;
+
+}
+
+.jmlSuaraCalon {
+  font-weight: bold;
+}
+
+.jmlSuaraCalon .salah {
+  background-color: #d73925;
+  color: #fff;
+}
+
 </style>
