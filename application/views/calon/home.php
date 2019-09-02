@@ -71,7 +71,6 @@
                 </span>
                 <?php 
                 echo '<h4 class="text-muted"><b>Daftar Calon Kepala Desa Tahun '.$this->session->userdata('thn_data').'</b></h4>';
-                echo getStatusTransaksi('Pengelolaan Data Pokok/DPT');
                 ?>
             </div>
         </div>
@@ -81,7 +80,7 @@
             <table class="table table-hover table-condensed" id="table">
         		<thead>
                     <tr>
-                        <th>No</th>
+                        <th>No Urut</th>
             			<th>Nama</th>
             			<th>TTL</th>
             	        <th>Agama</th>
@@ -118,9 +117,6 @@
     </div><!-- /.box-footer-->
 </div><!-- /.box -->
 
-
-<script src="<?php echo base_url(); ?>assets/plugins/sweetalert/dist/sweetalert.min.js"></script>
-<link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/sweetalert/dist/sweetalert.min.css">
 
 <script type="text/javascript">
 
@@ -198,6 +194,14 @@ $(document).ready(function() {
         $(this).parent().parent().removeClass('has-error');
         $(this).next().empty();
     });
+
+    $('textarea').keypress(function(event) {
+  if (event.which == 13) {
+    event.preventDefault();
+      var s = $(this).val();
+      $(this).val(s+"\n");
+  }
+});
     $("select").change(function(){
         $(this).parent().parent().removeClass('has-error');
         $(this).next().empty();
@@ -317,11 +321,22 @@ function view_person(id)
         dataType: "JSON",
         success: function(data)
         {
+            var months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+            var date = new Date(data.tgl_lahir);
+            var day = date.getDate(data.tgl_lahir);
+            var month = date.getMonth(data.tgl_lahir);
+            var yy = date.getYear();
+            var year = (yy < 1000) ? yy + 1900 : yy;
+            //document.write(thisDay + ', ' + day + ' ' + months[month] + ' ' + year);
+
             $('[name="id"]').val(data.id);
             
+            $('#nourut').text(data.nourut);
             $('#mynama').text(data.nama.toUpperCase());
             $('#mynik').text(data.nik);
-            $('#myttl').text(data.tmp_lahir+', '+data.tgl_lahir);
+            //$('#myttl').text(data.tmp_lahir+', '+dt.toDateString());
+            $('#myttl').text(data.tmp_lahir+', '+ day + ' ' + months[month] + ' ' + year);
             if((data.kelamin) == 'L')
             {
                 $('#mykelamin').text('Laki-laki');
@@ -331,11 +346,14 @@ function view_person(id)
                 $('#mykelamin').text('Perempuan');
             }
             $('#myagama').text(data.agama);
-            $('#myalamat').text(data.alamat1);
+            //$('#myalamat').text(data.alamat1);
+            $("#myalamat").html(nl2br(data.alamat1));
             $('#mypendidikan').text(data.nama_pendidikan);
             $('#mypekerjaan').text(data.nama_pekerjaan);
-            $('#myorganisasi').text(data.organisasi);
-            $('#myketerangan').text(data.keterangan);
+            //$('#myorganisasi').text(data.organisasi);
+            $("#myorganisasi").html(nl2br(data.organisasi));
+            //$('#myketerangan').text(data.keterangan);
+            $("#myketerangan").html(nl2br(data.keterangan));
             
             $('#mydaerah').text(data.nama_desa+', '+data.nama_kec);
             
@@ -351,7 +369,8 @@ function view_person(id)
             }
             else
             {
-                $('#photo-calon div').text('(No photo)');
+                //$('#photo-calon div').text('(No photo)');
+                $('#photo-calon div').html('<img src="'+base_url+'assets/img/no-photo.jpg" class="img-responsive calon-img">'); // show no-photo
             }
 
 
@@ -649,12 +668,13 @@ function delete_person(id)
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-md-3" id="label-photo">Upload Photo </label>
+                            <label class="control-label col-md-3" id="label-photo">Upload Photo</label> 
                             <div class="col-md-9">
-                                <input name="photo" type="file">
-                                <span><small>Ukuran file photo maksimal 2 MB.</small></span>
+                                <input name="photo" type="file" accept="image/png, image/jpeg, image/gif">
                                 <span class="help-block"></span>
+                                <small><em>Berkas photo harus berekstensi *.JPG/*.PNG/*.GIF dengan ukuran maksimal 2 MB (2048 KByte)</em></small>
                             </div>
+                                
                         </div>
                     </div>
                 </form>
@@ -679,54 +699,84 @@ function delete_person(id)
             </div>
             <div class="modal-body">
                 <div class="col-md-12">
-
-                    <div id="photo-calon" class="col-md-4 well">
+                    
+                    <!-- <div  id="photo-calon" class="col-md-4 well">
+                        <div id="nourut" class="numberCircle text-center">-</div>
                         <div>
                             (No photo)
                             <span class="help-block"></span>
                         </div>
+                    </div> -->
+
+                    <div class="col-md-4">
+                        
+                        <div class="text-center">
+                            <div class="numberCircle" id="nourut">
+                            -
+                            </div>
+                            <div class="calon-img-frame">
+                                <div id="photo-calon">
+                                    <div>(No photo)</div>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+
+
+
+                        <!-- <div class="row">
+                            <center>
+                            <div class="col-sm-12 numberCircle text-center" id="nourut">-</div>
+                            </center>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="row" id="photo-calon">
+                            <div class="col-sm-12">(No photo)</div>
+                        </div> -->
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-8 detailCalon">
                         <legend id="mydaerah">Daerah Pemilihan </legend>
                         <div class="row">
-                            <div class="col-sm-4"><b>Nama Calon</b></div>
-                            <div class="col-sm-8 text-blue" id="mynama" style="font-size: 1.2em;">nama</div>
+                            <div class="col-sm-4">Nama Calon</div>
+                            <div class="col-sm-8 namaCalon" id="mynama">nama</div>
                         </div>
                         <div class="row">
-                            <div class="col-sm-4"><b>N.I.K</b></div>
-                            <div class="col-sm-8" id="mynik">-</div>
+                            <div class="col-sm-4">N.I.K</div>
+                            <div class="col-sm-8 detailCalonText" id="mynik">-</div>
                         </div>
                         <div class="row">
-                            <div class="col-sm-4"><b>TTL</b></div>
-                            <div class="col-sm-8" id="myttl">-</div>
+                            <div class="col-sm-4">TTL</div>
+                            <div class="col-sm-8 detailCalonText" id="myttl">-</div>
                         </div>
                         <div class="row">
-                            <div class="col-sm-4"><b>Jenis Kelamin</b></div>
-                            <div class="col-sm-8" id="mykelamin">-</div>
+                            <div class="col-sm-4">Jenis Kelamin</div>
+                            <div class="col-sm-8 detailCalonText" id="mykelamin">-</div>
                         </div>
                         <div class="row">
-                            <div class="col-sm-4"><b>Agama</b></div>
-                            <div class="col-sm-8" id="myagama">-</div>
+                            <div class="col-sm-4">Agama</div>
+                            <div class="col-sm-8 detailCalonText" id="myagama">-</div>
                         </div>
                         <div class="row">
-                            <div class="col-sm-4"><b>Alamat</b></div>
-                            <div class="col-sm-8" id="myalamat">-</div>
+                            <div class="col-sm-4">Alamat</div>
+                            <div class="col-sm-8 detailCalonText" id="myalamat">-</div>
                         </div>
                         <div class="row">
-                            <div class="col-sm-4"><b>Pendidikan Terakhir</b></div>
-                            <div class="col-sm-8" id="mypendidikan">-</div>
+                            <div class="col-sm-4">Pendidikan Terakhir</div>
+                            <div class="col-sm-8 detailCalonText" id="mypendidikan">-</div>
                         </div>
                         <div class="row">
-                            <div class="col-sm-4"><b>Pekerjaan</b></div>
-                            <div class="col-sm-8" id="mypekerjaan">-</div>
+                            <div class="col-sm-4">Pekerjaan</div>
+                            <div class="col-sm-8 detailCalonText" id="mypekerjaan">-</div>
                         </div>
                         <div class="row">
-                            <div class="col-sm-4"><b>Pengalaman Organisasi</b></div>
-                            <div class="col-sm-8" id="myorganisasi">-</div>
+                            <div class="col-sm-4">Pengalaman Organisasi</div>
+                            <div class="col-sm-8 detailCalonText" id="myorganisasi">-</div>
                         </div>
                         <div class="row">
-                            <div class="col-sm-4"><b>Keterangan Tambahan</b></div>
-                            <div class="col-sm-8" id="myketerangan">-</div>
+                            <div class="col-sm-4">Keterangan Tambahan</div>
+                            <div class="col-sm-8 detailCalonText" id="myketerangan">-</div>
                         </div>
                     </div>
                     <div class="box-body">
