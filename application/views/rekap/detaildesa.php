@@ -95,7 +95,7 @@
 
 
 <!--Load chart js-->
-<script type="text/javascript" src="<?php echo base_url().'assets/plugins/chartjs/chart.min.js'?>"></script>
+<script type="text/javascript" src="<?php echo base_url().'assets/plugins/chartjs/Chart.min.js'?>"></script>
 <script>
 
     var ctx = document.getElementById("canvasdesa").getContext('2d');
