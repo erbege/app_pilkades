@@ -262,3 +262,6 @@ class M_penyelenggara extends CI_Model {
 		return $data->row();
 	}
 }
+
+/* End of file M_penyelenggara.php */
+/* Location: ./application/models/M_penyelenggara.php */

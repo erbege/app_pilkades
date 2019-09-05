@@ -48,13 +48,18 @@ class Penyelenggara extends AUTH_Controller {
 			$row[] = $desapem->suratsuara;
 
 			//add html for action
-			if (getStatusTransaksi('Pengelolaan Data Pokok/DPT')) {
+			if ($this->session->userdata('id_role') == '3') {
+				if (getStatusTransaksi('Pengelolaan Data Pokok/DPT')) {
 
-			$row[] = '<a class="btn btn-xs btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_desa('."'".$desapem->id."'".')"><i class="glyphicon glyphicon-pencil"></i></a>
-				  <a class="btn btn-xs btn-danger" href="javascript:void(0)" title="Hapus" onclick="delete_desa('."'".$desapem->id."'".')"><i class="glyphicon glyphicon-trash"></i></a>';
+					$row[] = '<a class="btn btn-xs btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_desa('."'".$desapem->id."'".')"><i class="glyphicon glyphicon-pencil"></i></a>
+					  <a class="btn btn-xs btn-danger" href="javascript:void(0)" title="Hapus" onclick="delete_desa('."'".$desapem->id."'".')"><i class="glyphicon glyphicon-trash"></i></a>';
 				} else {
 					$row[] = 'N/A';
 				}
+			} else {
+				$row[] = '<a class="btn btn-xs btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_desa('."'".$desapem->id."'".')"><i class="glyphicon glyphicon-pencil"></i></a>
+					  <a class="btn btn-xs btn-danger" href="javascript:void(0)" title="Hapus" onclick="delete_desa('."'".$desapem->id."'".')"><i class="glyphicon glyphicon-trash"></i></a>';
+			}
 
 			$data[] = $row;
 		}
@@ -72,7 +77,7 @@ class Penyelenggara extends AUTH_Controller {
 	public function ajax_edit($id)
 	{
 		$data = $this->desapemilihan->get_by_id($id);
-		//$data->dob = ($data->dob == '0000-00-00') ? '' : $data->dob; // if 0000-00-00 set tu empty for datepicker compatibility
+
 		echo json_encode($data);
 	}
 
@@ -208,16 +213,12 @@ class Penyelenggara extends AUTH_Controller {
 	}
 
 	function add_ajax_des($id_kec){
-	    //$query = $this->db->get_where('tbl_wdesa',array('kecamatan_id'=>$id_kec));
-	    //$query = $this->db->get_where('tbl_wdesa',array('kecamatan_id'=>$id_kec));
 
 	    $this->db->select('*');
 		$this->db->from('tbl_wdesa');
 		$this->db->like('kecamatan_id',$id_kec);
 		$query=$this->db->get();
 
-	    //$data = "<option value=''> - Pilih Desa - </option>";
-	    
 	    foreach ($query->result() as $value) {
 	        $data .= "<option value='".$value->id_desa."'>".$value->nama_desa."</option>";
 	    }

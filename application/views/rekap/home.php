@@ -1,14 +1,6 @@
 <div class="msg" style="display:none;">
   <?php echo @$this->session->flashdata('msg'); ?>
 </div>
-
-<?php
-
-    /*echo '<pre>';
-    print_r($this->session->userdata());
-    echo '</pre>';*/
-
-?>
 <?php
     foreach($rekapsatu as $data){
         $merk[] = $data->nama_kec;
@@ -20,13 +12,7 @@
 ?>
 <!-- Default box -->
 <div class="box">
-    <!-- <div class="box-header with-border">
-        <h3 class="box-title"><?php echo $judul ?></h3> 
-        <div class="box-tools pull-right">
-            <button class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse"><i class="fa fa-minus"></i></button>
-            <button class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove"><i class="fa fa-times"></i></button>
-        </div>
-    </div> -->
+
     <div class="box-body">
         <div class="panel panel-primary no-print">
             <div class="panel-body">

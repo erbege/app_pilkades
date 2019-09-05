@@ -4,9 +4,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Rekap extends AUTH_Controller {
 	public function __construct() {
 		parent::__construct();
-		//$this->load->model('M_pegawai');
-		//$this->load->model('M_posisi');
-		//$this->load->model('M_kota');
 		$this->load->model('M_penyelenggara','desapemilihan');
 		$this->load->model('M_rekap','rekap');
 	}
@@ -62,5 +59,5 @@ class Rekap extends AUTH_Controller {
 
 }
 
-/* End of file Home.php */
-/* Location: ./application/controllers/Home.php */
+/* End of file Rekap.php */
+/* Location: ./application/controllers/Rekap.php */

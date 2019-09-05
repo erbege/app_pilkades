@@ -34,9 +34,6 @@ class Calon extends AUTH_Controller {
 		$data['deskripsi'] 		= "Data Calon Kepala Desa Tahun ".$this->session->userdata('thn_data');
 		$data['dataPekerjaan'] 	= $this->pekerjaan->select_all();
 		$data['dataPendidikan'] = $this->pendidikan->select_all();
-		//$data['dataDesanya']   	= $this->desa->select_all();
-
-		//$data['modal_tambah_posisi'] = show_my_modal('modals/modal_tambah_posisi', 'tambah-posisi', $data);
 
 		$this->template->views('calon/home', $data);
 	}
@@ -51,7 +48,7 @@ class Calon extends AUTH_Controller {
 		foreach ($list as $calon) {
 			$no++;
 			$row = array();
-			$row[] = $no;
+			$row[] = "<div class='numberCircleSmall'>".$calon->nourut."</div>";
 			$row[] = $calon->nama;
 			$row[] = $calon->tmp_lahir.',<br /> '.$calon->tgl_lahir;
 			$row[] = $calon->agama;
@@ -64,19 +61,20 @@ class Calon extends AUTH_Controller {
 			else
 				$row[] = '(No photo)';
 
-			//add html for action
-			/*
-			$row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_person('."'".$calon->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
-				  <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Hapus" onclick="delete_person('."'".$calon->id."'".')"><i class="glyphicon glyphicon-trash"></i> Delete</a>';
-			*/
-			if (getStatusTransaksi('Pengelolaan Data Calon Kepala Desa')) {
-				$row[] = '<a class="btn btn-xs btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_person('."'".$calon->id."'".')"><i class="glyphicon glyphicon-pencil"></i></a>
-				  <a class="btn btn-xs btn-danger" href="javascript:void(0)" title="Hapus" onclick="delete_person('."'".$calon->id."'".')"><i class="glyphicon glyphicon-trash"></i></a>
-				  <a class="btn btn-xs btn-warning" href="javascript:void(0)" title="Lihat" onclick="view_person('."'".$calon->id."'".')"><i class="glyphicon glyphicon-search"></i></a>';
+			if ($this->session->userdata('id_role') == '3') {
+				if (getStatusTransaksi('Pengelolaan Data Calon Kepala Desa')) {
+					$row[] = '<a class="btn btn-xs btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_person('."'".$calon->id."'".')"><i class="glyphicon glyphicon-pencil"></i></a>
+					  <a class="btn btn-xs btn-danger" href="javascript:void(0)" title="Hapus" onclick="delete_person('."'".$calon->id."'".')"><i class="glyphicon glyphicon-trash"></i></a>
+					  <a class="btn btn-xs btn-warning" href="javascript:void(0)" title="Lihat" onclick="view_person('."'".$calon->id."'".')"><i class="glyphicon glyphicon-search"></i></a>';
+				} else {
+					$row[] = '
+					  <a class="btn btn-xs btn-warning" href="javascript:void(0)" title="Lihat" onclick="view_person('."'".$calon->id."'".')"><i class="glyphicon glyphicon-search"></i></a>';	  
+				
+				}
 			} else {
-				$row[] = '
-				  <a class="btn btn-xs btn-warning" href="javascript:void(0)" title="Lihat" onclick="view_person('."'".$calon->id."'".')"><i class="glyphicon glyphicon-search"></i></a>';	  
-			
+				$row[] = '<a class="btn btn-xs btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_person('."'".$calon->id."'".')"><i class="glyphicon glyphicon-pencil"></i></a>
+					  <a class="btn btn-xs btn-danger" href="javascript:void(0)" title="Hapus" onclick="delete_person('."'".$calon->id."'".')"><i class="glyphicon glyphicon-trash"></i></a>
+					  <a class="btn btn-xs btn-warning" href="javascript:void(0)" title="Lihat" onclick="view_person('."'".$calon->id."'".')"><i class="glyphicon glyphicon-search"></i></a>';
 			}
 		    
 	  		
@@ -97,7 +95,7 @@ class Calon extends AUTH_Controller {
 	public function ajax_edit($id)
 	{
 		$data = $this->calon->get_by_id($id);
-		$data->tgl_lahir = ($data->tgl_lahir == '0000-00-00') ? '' : $data->tgl_lahir; // if 0000-00-00 set tu empty for datepicker compatibility
+		$data->tgl_lahir = ($data->tgl_lahir == '0000-00-00') ? '' : $data->tgl_lahir; 
 		echo json_encode($data);
 	}
 
@@ -193,9 +191,12 @@ class Calon extends AUTH_Controller {
 
 	private function _do_upload()
 	{
-		$nmft2 = round(microtime(true) * 1000); //just milisecond timestamp fot unique name
-		$nmft1 = 'photo';
-		$nmft1 = $this->input->post('nama');
+		$nmft1 = $this->input->post('kddesa');
+		$nmft2 = $this->input->post('nourut');
+		$nmft3 = $this->input->post('nama');
+		$nmft4 = round(microtime(true) * 1000); //just milisecond timestamp fot unique name
+		//$nmft1 = 'photo';
+		
 
 		$config['upload_path']          = 'upload/';
         $config['allowed_types']        = 'gif|jpg|png';
@@ -203,7 +204,7 @@ class Calon extends AUTH_Controller {
         //$config['max_width']            = 1000; // set max width image allowed
         //$config['max_height']           = 1000; // set max height allowed
         //$config['file_name']            = round(microtime(true) * 1000); //just milisecond timestamp fot unique name
-        $config['file_name']            = strtoupper($nmft1).'-'.$nmft2;
+        $config['file_name']            = $nmft1.'-'.$nmft2.'-'.strtoupper($nmft3).'_'.$nmft4;
 
         $this->load->library('upload', $config);
 
@@ -270,7 +271,7 @@ class Calon extends AUTH_Controller {
 
 	public function export() {
 		error_reporting(E_ALL);
-    
+    	
 		include_once './assets/phpexcel/Classes/PHPExcel.php';
 		$objPHPExcel = new PHPExcel();
 
@@ -283,13 +284,13 @@ class Calon extends AUTH_Controller {
 		$objPHPExcel->getActiveSheet()->SetCellValue('A'.$rowCount, "NO");
 		$objPHPExcel->getActiveSheet()->SetCellValue('B'.$rowCount, "KECAMATAN");
 		$objPHPExcel->getActiveSheet()->SetCellValue('C'.$rowCount, "DESA");
+		$objPHPExcel->getActiveSheet()->SetCellValue('E'.$rowCount, "NO URUT");
 		$objPHPExcel->getActiveSheet()->SetCellValue('D'.$rowCount, "NAMA");
-		$objPHPExcel->getActiveSheet()->SetCellValue('D'.$rowCount, "NO URUT");
-		$objPHPExcel->getActiveSheet()->SetCellValue('E'.$rowCount, "TEMPAT/TGL LAHIR");
-		$objPHPExcel->getActiveSheet()->SetCellValue('F'.$rowCount, "L/P");
-		$objPHPExcel->getActiveSheet()->SetCellValue('G'.$rowCount, "AGAMA");
-		$objPHPExcel->getActiveSheet()->SetCellValue('H'.$rowCount, "PENDIDIKAN TERAKHIR");
-		$objPHPExcel->getActiveSheet()->SetCellValue('I'.$rowCount, "PEKERJAAN");
+		$objPHPExcel->getActiveSheet()->SetCellValue('F'.$rowCount, "TEMPAT/TGL LAHIR");
+		$objPHPExcel->getActiveSheet()->SetCellValue('G'.$rowCount, "L/P");
+		$objPHPExcel->getActiveSheet()->SetCellValue('H'.$rowCount, "AGAMA");
+		$objPHPExcel->getActiveSheet()->SetCellValue('I'.$rowCount, "PENDIDIKAN TERAKHIR");
+		$objPHPExcel->getActiveSheet()->SetCellValue('J'.$rowCount, "PEKERJAAN");
 
 		$rowCount++;
 
@@ -297,13 +298,13 @@ class Calon extends AUTH_Controller {
 		    $objPHPExcel->getActiveSheet()->SetCellValue('A'.$rowCount, $rowCount-1); 
 		    $objPHPExcel->getActiveSheet()->SetCellValue('B'.$rowCount, $value->nama_kec); 
 		    $objPHPExcel->getActiveSheet()->SetCellValue('C'.$rowCount, $value->nama_desa); 
+		    $objPHPExcel->getActiveSheet()->SetCellValue('E'.$rowCount, $value->nourut); 
 		    $objPHPExcel->getActiveSheet()->SetCellValue('D'.$rowCount, $value->nama); 
-		    $objPHPExcel->getActiveSheet()->SetCellValue('D'.$rowCount, $value->nourut); 
-		    $objPHPExcel->getActiveSheet()->SetCellValue('E'.$rowCount, $value->tmp_lahir.'/'.$value->tgl_lahir); 
-		    $objPHPExcel->getActiveSheet()->SetCellValue('F'.$rowCount, $value->kelamin); 
-		    $objPHPExcel->getActiveSheet()->SetCellValue('G'.$rowCount, $value->agama); 
-		    $objPHPExcel->getActiveSheet()->SetCellValue('H'.$rowCount, $value->nama_pendidikan); 
-		    $objPHPExcel->getActiveSheet()->SetCellValue('I'.$rowCount, $value->nama_pekerjaan); 
+		    $objPHPExcel->getActiveSheet()->SetCellValue('F'.$rowCount, $value->tmp_lahir); 
+		    $objPHPExcel->getActiveSheet()->SetCellValue('G'.$rowCount, $value->kelamin); 
+		    $objPHPExcel->getActiveSheet()->SetCellValue('H'.$rowCount, $value->agama); 
+		    $objPHPExcel->getActiveSheet()->SetCellValue('I'.$rowCount, $value->nama_pendidikan); 
+		    $objPHPExcel->getActiveSheet()->SetCellValue('J'.$rowCount, $value->nama_pekerjaan); 
 		    $rowCount++; 
 		} 
 
@@ -312,51 +313,6 @@ class Calon extends AUTH_Controller {
 
 		$this->load->helper('download');
 		force_download('./assets/excel/DataCalon'.$this->session->userdata('id_kec').'.xlsx', NULL);
-	}
-
-	public function add_ajax_desaasas($id_kc)
-	{
-	    //$query = $this->db->get_where('tbl_desa_penyelenggara',array('kdkec'=>$id_kc));
-	     
-		$query = $this->db->select('*')->from('tbl_desa_penyelenggara')->join('tbl_wdesa', 'tbl_wdesa.id_desa=tbl_desa_penyelenggara.kddesa')->where('tbl_desa_penyelenggara',array('kdkec'=>$id_kc))->get();
-		$query1 = $this->db->get('tbl_desa_penyelenggara');
-
-	    $data = "<option value=''>- Pilih Desa -</option>";
-	    foreach ($query->result() as $value) {
-	        $data .= "<option value='".$value->kddesa."'>".$value->kddesa."</option>";
-	    }
-	    echo $data;
-	}
-
-	public function add_ajax_desasss($id_kc) {
-			$sql = "SELECT * FROM tbl_desa_penyelenggara AS a 
-			]LEFT JOIN tbl_wkecamatan AS b ON b.id_kec = a.kdkec 
-			LEFT JOIN tbl_wdesa AS c ON c.id_desa = a.kddesa 
-			WHERE a.thn_pemilihan = '". $this->session->userdata('thn_data')."' 
-			AND tbl_desa_penyelenggara.kdkec = '". $id_kc."' ";
-
-		$query = $this->db->query($sql);
-
-		$data = "<option value=''>- Pilih Desa -</option>";
-	    foreach ($query->result() as $value) {
-	        $data .= "<option value='".$value->kddesa."'>".$value->kddesa."</option>";
-	    }
-	    echo $data;
-	}
-
-	public function add_ajax_desaaaaaaaaa($id_kc)
-	{
-	    //$query = $this->db->get_where('tbl_desa_penyelenggara',array('kdkec'=>$id_kc));
-	    $where = array('kdkec'=>$id_kc);
-
-	    $query = $this->db->distinct()->select('tbl_wdesa.id_desa,tbl_wdesa.nama_desa')->from('tbl_desa_penyelenggara')->join('tbl_wdesa', 'tbl_wdesa.kecamatan_id=tbl_desa_penyelenggara.kdkec','left')->where($where)->get();
-	    //$query = $this->db->select('DISTINCT(tbl_desa_penyelenggara.kddesa)')->from('tbl_desa_penyelenggara')->join('tbl_wdesa', 'tbl_wdesa.kecamatan_id=tbl_desa_penyelenggara.kdkec','left')->where($where)->get();
-
-	    $data = "<option value=''>- Pilih Desa -</option>";
-	    foreach ($query->result() as $value) {
-	        $data .= "<option value='".$value->id_desa."'>".$value->nama_desa."</option>";
-	    }
-	    echo $data;
 	}
 
 	function add_ajax_desa($id_kec){
@@ -368,7 +324,7 @@ class Calon extends AUTH_Controller {
 	    }
 	    echo $data;
 	}
-
+	
 }
 
 /* End of file Calon.php */

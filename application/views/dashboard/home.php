@@ -1,12 +1,3 @@
-<!-- Tampilkan pesan selamat datang -->
-
-<?php
-
-  /*echo '<pre>';
-    print_r($this->session->userdata());
-echo '</pre>';*/
-
-?>
 <div class="row">
   <div class="col-lg-3 col-xs-6">
     <!-- small box -->

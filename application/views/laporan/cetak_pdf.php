@@ -35,14 +35,14 @@
                     <th class="text-center" rowspan="3" style="width: 30px">No</th>
                     <th class="text-center" rowspan="3" style="width: 120px">Kecamatan</th>
                     <th class="text-center" rowspan="3" style="width: 120px">Desa</th>
-                    <th class="text-center" rowspan="2" colspan="3">Jumlah Pemilih</th>
-                    <th class="text-center" colspan="5">Surat Suara</th>
+                    <th class="text-center" rowspan="2" colspan="3">DPT</th>
+                    <th class="text-center" colspan="4">Surat Suara</th>
                     <th class="text-center" colspan="12">Perolehan Suara</th>
+                    <th class="text-center" rowspan="3">Partisipasi (%)</th>
                 </tr>
                 <tr>
                     <th class="text-center" rowspan="2" style="width: 40px">S</th>
                     <th class="text-center" rowspan="2" style="width: 40px">TS</th>
-                    <th class="text-center" rowspan="2" style="width: 40px">R</th>
                     <th class="text-center" rowspan="2" style="width: 40px">TD</th>
                     <th class="text-center" rowspan="2" style="width: 40px">Jml</th>
                     <th class="text-center" colspan="2">Calon No Urut 1</th>
@@ -99,6 +99,19 @@
                 
                 <?php
                     $no = 0;
+                    $totalDPTL = 0;
+                    $totalDPTP = 0;
+                    $totalDPTJml = 0;
+                    $totalSSS = 0;
+                    $totalSSTS = 0;
+                    $totalSSTD = 0;
+                    $totalSSJml = 0;
+                    $totalCalon1 = 0;
+                    $totalCalon2 = 0;
+                    $totalCalon3 = 0;
+                    $totalCalon4 = 0;
+                    $totalCalon5 = 0;
+                    $totalCalonJml = 0;
                     foreach ($datalaporan as $dtlap) {
                         $no++;
                         echo '<tr>';
@@ -111,7 +124,6 @@
                         echo "<td align='right'>".number_format($jml_dpt)."</td>";
                         echo "<td align='right'>".number_format($dtlap->sssah)."</td>";
                         echo "<td align='right'>".number_format($dtlap->sstdksah)."</td>";
-                        echo "<td align='right'>".number_format($dtlap->ssrusak)."</td>";
                         echo "<td align='right'>".number_format($dtlap->sstidakterpakai)."</td>";
                         $jml_ss = $dtlap->sssah+$dtlap->sstdksah+$dtlap->ssrusak+$dtlap->sstidakterpakai;
                         echo "<td align='right'>".number_format($jml_ss)."</td>";
@@ -160,42 +172,62 @@
                         $jml_persen = $persen1+$persen2+$persen3+$persen4+$persen5;
                         echo "<td align='right'>".number_format($jml_hasil)."</td>";
                         echo "<td align='right'>".number_format($jml_persen,2)."</td>";
+
+                        //angka partisipasi
+                        if ((($dtlap->sssah+$dtlap->sstdksah) > 0) && ($jml_dpt > 0)){
+                            $partisipasi = ($dtlap->sssah+$dtlap->sstdksah) / ($jml_dpt) * 100;
+                        } else {
+                            $partisipasi = 0;
+                        } 
+                        echo "<td align='right'>".number_format($partisipasi,2)."</td>";
                         echo '<tr>';
+
+                        $totalDPTL      = $totalDPTL+$dtlap->dpt_l;
+                        $totalDPTP      = $totalDPTP+$dtlap->dpt_p;
+                        $totalDPTJml    = $totalDPTJml+$dtlap->dpt_jml;
+                        $totalSSS       = $totalSSS+$dtlap->sssah;
+                        $totalSSTS      = $totalSSTS+$dtlap->sstdksah;
+                        $totalSSTD      = $totalSSTD+$dtlap->sstidakterpakai;
+                        $totalSSJml     = $totalSSJml+$jml_ss;
+                        $totalCalon1    = $totalCalon1+$dtlap->A;
+                        $totalCalon2    = $totalCalon2+$dtlap->B;
+                        $totalCalon3    = $totalCalon3+$dtlap->C;
+                        $totalCalon4    = $totalCalon4+$dtlap->D;
+                        $totalCalon5    = $totalCalon5+$dtlap->E;
+                        $totalCalonJml  = $totalCalonJml+$jml_hasil;
                     }
                 ?>
             </tbody>
-            <!-- <tfoot>
-                <tr>
-                    <th class="text-center"></th>
-                    <th class="text-center"></th>
-                    <th class="text-center"></th>
-                    <th class="text-center"></th>
-                    <th class="text-center"></th>
-                    <th class="text-center"></th>
-                    <th class="text-center"></th>
-                    <th class="text-center"></th>
-                    <th class="text-center"></th>
-                    <th class="text-center"></th>
-                    <th class="text-center"></th>
-                    <th class="text-center"></th>
-                    <th class="text-center"></th>
-                    <th class="text-center"></th>
-                    <th class="text-center"></th>
-                    <th class="text-center"></th>
-                    <th class="text-center"></th>
-                    <th class="text-center"></th>
-                    <th class="text-center"></th>
-                    <th class="text-center"></th>
-                    <th class="text-center"></th>
-                    <th class="text-center"></th>
-                    <th class="text-center"></th>
-                </tr>
-            </tfoot> -->
+            <tfoot>
+                    <tr>
+                        <th class="text-right" colspan="3"></th>
+                        <th class="text-right"><?php echo number_format($totalDPTL); ?></th>
+                        <th class="text-right"><?php echo number_format($totalDPTP); ?></th>
+                        <th class="text-right"><?php echo number_format($totalDPTJml); ?></th>
+                        <th class="text-right"><?php echo number_format($totalSSS); ?></th>
+                        <th class="text-right"><?php echo number_format($totalSSTS); ?></th>
+                        <th class="text-right"><?php echo number_format($totalSSTD); ?></th>
+                        <th class="text-right"><?php echo number_format($totalSSJml); ?></th>
+
+                        <th class="text-right"><?php echo number_format($totalCalon1); ?></th>
+                        <th class="text-center"></th>
+                        <th class="text-right"><?php echo number_format($totalCalon2); ?></th>
+                        <th class="text-center"></th>
+                        <th class="text-right"><?php echo number_format($totalCalon3); ?></th>
+                        <th class="text-center"></th>
+                        <th class="text-right"><?php echo number_format($totalCalon4); ?></th>
+                        <th class="text-center"></th>
+                        <th class="text-right"><?php echo number_format($totalCalon5); ?></th>
+                        <th class="text-center"></th>
+                        <th class="text-right"><?php echo number_format($totalCalonJml); ?></th>
+                        <th class="text-center"></th>
+                        <th class="text-center"></th>
+                    </tr>
+                </tfoot>
         </table>
         <p><b>Keterangan: </b><br/>
             S : Surat Suara Sah <br/>
             TS : Surat Suara Tidak Sah <br/>
-            R  : Surat Suara Rusak <br/>
             TD : Surat Suara Tidak Digunakan
         </p>
     </body>

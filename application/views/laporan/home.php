@@ -1,18 +1,5 @@
-<?php
-    // echo '<pre>';
-    // print_r($this->session->userdata());
-    // echo '</pre>';
-?>
-
 <!-- Default box -->
 <div class="box">
-    <!-- <div class="box-header with-border">
-        <h3 class="box-title"><?php echo $judul ?></h3> 
-        <div class="box-tools pull-right">
-            <button class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse"><i class="fa fa-minus"></i></button>
-            <button class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove"><i class="fa fa-times"></i></button>
-        </div>
-    </div> -->
     <div class="box-body">
         <?php
             if (($this->session->userdata('id_role') == 1) || ($this->session->userdata('id_role') == 2)){
@@ -61,14 +48,14 @@
                         <th class="text-center" rowspan="3">No</th>
                         <th class="text-center" rowspan="3">Kecamatan</th>
                         <th class="text-center" rowspan="3">Desa</th>
-                        <th class="text-center" rowspan="2" colspan="3">Jumlah Pemilih</th>
-                        <th class="text-center" colspan="5">Surat Suara</th>
+                        <th class="text-center" rowspan="2" colspan="3">DPT</th>
+                        <th class="text-center" colspan="4">Surat Suara</th>
             			<th class="text-center" colspan="12">Perolehan Suara</th>
+                        <th class="text-center" rowspan="3">Partisipasi (%)</th>
             		</tr>
                     <tr>
                         <th class="text-center" rowspan="2">Sah</th>
                         <th class="text-center" rowspan="2">Tidak Sah</th>
-                        <th class="text-center" rowspan="2">Rusak</th>
                         <th class="text-center" rowspan="2">Tdk Digunakan</th>
                         <th class="text-center" rowspan="2">Jumlah</th>
                         <th class="text-center" colspan="2">Calon No Urut 1</th>
@@ -124,22 +111,35 @@
         		<tbody>
                     <?php
                     $no = 0;
+                    $totalDPTL = 0;
+                    $totalDPTP = 0;
+                    $totalDPTJml = 0;
+                    $totalSSS = 0;
+                    $totalSSTS = 0;
+                    $totalSSTD = 0;
+                    $totalSSJml = 0;
+                    $totalCalon1 = 0;
+                    $totalCalon2 = 0;
+                    $totalCalon3 = 0;
+                    $totalCalon4 = 0;
+                    $totalCalon5 = 0;
+                    $totalCalonJml = 0;
+
                     foreach ($datalaporan as $dtlap) {
                         $no++;
                         echo '<tr>';
                         echo "<td align='center'>".$no."</td>";
                         echo "<td>".$dtlap->nama_kec."</td>";
                         echo "<td>".$dtlap->nama_desa."</td>";
-                        echo "<td>".number_format($dtlap->dpt_l)."</td>";
-                        echo "<td>".number_format($dtlap->dpt_p)."</td>";
+                        echo "<td align='right'>".number_format($dtlap->dpt_l)."</td>";
+                        echo "<td align='right'>".number_format($dtlap->dpt_p)."</td>";
                         $jml_dpt = $dtlap->dpt_l+$dtlap->dpt_p;
-                        echo "<td>".number_format($jml_dpt)."</td>";
-                        echo "<td>".number_format($dtlap->sssah)."</td>";
-                        echo "<td>".number_format($dtlap->sstdksah)."</td>";
-                        echo "<td>".number_format($dtlap->ssrusak)."</td>";
-                        echo "<td>".number_format($dtlap->sstidakterpakai)."</td>";
+                        echo "<td align='right'>".number_format($jml_dpt)."</td>";
+                        echo "<td align='right'>".number_format($dtlap->sssah)."</td>";
+                        echo "<td align='right'>".number_format($dtlap->sstdksah)."</td>";
+                        echo "<td align='right'>".number_format($dtlap->sstidakterpakai)."</td>";
                         $jml_ss = $dtlap->sssah+$dtlap->sstdksah+$dtlap->ssrusak+$dtlap->sstidakterpakai;
-                        echo "<td>".number_format($jml_ss)."</td>";
+                        echo "<td align='right'>".number_format($jml_ss)."</td>";
                         
                         //persen1
                         if (($dtlap->A > 0) && (($dtlap->A+$dtlap->B+$dtlap->C+$dtlap->D+$dtlap->E) > 0)) {
@@ -148,11 +148,11 @@
                             $persen1 = 0;
                         }
                         if (($dtlap->A > $dtlap->B) && ($dtlap->A > $dtlap->C) && ($dtlap->A > $dtlap->D) && ($dtlap->A > $dtlap->E)) {
-                            echo "<td class='bg-gray'>".number_format($dtlap->A)."</td>";
-                            echo "<td class='bg-gray'>".number_format($persen1,2)."</td>";
+                            echo "<td class='bg-gray' align='right'>".number_format($dtlap->A)."</td>";
+                            echo "<td class='bg-gray' align='right'>".number_format($persen1,2)."</td>";
                         } else {
-                            echo "<td>".number_format($dtlap->A)."</td>";
-                            echo "<td>".number_format($persen1,2)."</td>";
+                            echo "<td align='right'>".number_format($dtlap->A)."</td>";
+                            echo "<td align='right'>".number_format($persen1,2)."</td>";
                         }
 
                         //persen2
@@ -162,11 +162,11 @@
                             $persen2 = 0;
                         }
                         if (($dtlap->B > $dtlap->A) && ($dtlap->B > $dtlap->C) && ($dtlap->B > $dtlap->D) && ($dtlap->B > $dtlap->E)) {
-                            echo "<td class='bg-gray'>".number_format($dtlap->B)."</td>";
-                            echo "<td class='bg-gray'>".number_format($persen2,2)."</td>";
+                            echo "<td class='bg-gray' align='right'>".number_format($dtlap->B)."</td>";
+                            echo "<td class='bg-gray' align='right'>".number_format($persen2,2)."</td>";
                         } else {
-                            echo "<td>".number_format($dtlap->B)."</td>";
-                            echo "<td>".number_format($persen2,2)."</td>";
+                            echo "<td align='right'>".number_format($dtlap->B)."</td>";
+                            echo "<td align='right'>".number_format($persen2,2)."</td>";
                         }
 
                         //persen3
@@ -176,11 +176,11 @@
                             $persen3 = 0;
                         }
                         if (($dtlap->C > $dtlap->A) && ($dtlap->C > $dtlap->B) && ($dtlap->C > $dtlap->D) && ($dtlap->C > $dtlap->E)) {
-                            echo "<td class='bg-gray'>".number_format($dtlap->C)."</td>";
-                            echo "<td class='bg-gray'>".number_format($persen3,2)."</td>";
+                            echo "<td class='bg-gray' align='right'>".number_format($dtlap->C)."</td>";
+                            echo "<td class='bg-gray' align='right'>".number_format($persen3,2)."</td>";
                         } else {
-                            echo "<td>".number_format($dtlap->C)."</td>";
-                            echo "<td>".number_format($persen3,2)."</td>";
+                            echo "<td align='right'>".number_format($dtlap->C)."</td>";
+                            echo "<td align='right'>".number_format($persen3,2)."</td>";
                         }
 
                         //persen4
@@ -190,11 +190,11 @@
                             $persen4 = 0;
                         }
                         if (($dtlap->D > $dtlap->A) && ($dtlap->D > $dtlap->B) && ($dtlap->D > $dtlap->C) && ($dtlap->D > $dtlap->E)) {
-                            echo "<td class='bg-gray'>".number_format($dtlap->D)."</td>";
-                            echo "<td class='bg-gray'>".number_format($persen4,2)."</td>";
+                            echo "<td class='bg-gray' align='right'>".number_format($dtlap->D)."</td>";
+                            echo "<td class='bg-gray' align='right'>".number_format($persen4,2)."</td>";
                         } else {
-                            echo "<td>".number_format($dtlap->D)."</td>";
-                            echo "<td>".number_format($persen4,2)."</td>";
+                            echo "<td align='right'>".number_format($dtlap->D)."</td>";
+                            echo "<td align='right'>".number_format($persen4,2)."</td>";
                         }
 
                         //persen5
@@ -204,48 +204,69 @@
                             $persen5 = 0;
                         }
                         if (($dtlap->E > $dtlap->A) && ($dtlap->E > $dtlap->B) && ($dtlap->E > $dtlap->C) && ($dtlap->E > $dtlap->D)) {
-                            echo "<td class='bg-gray'>".number_format($dtlap->E)."</td>";
-                            echo "<td class='bg-gray'>".number_format($persen5,2)."</td>";
+                            echo "<td class='bg-gray' align='right'>".number_format($dtlap->E)."</td>";
+                            echo "<td class='bg-gray' align='right'>".number_format($persen5,2)."</td>";
                         } else {
-                            echo "<td>".number_format($dtlap->E)."</td>";
-                            echo "<td>".number_format($persen5,2)."</td>";
+                            echo "<td align='right'>".number_format($dtlap->E)."</td>";
+                            echo "<td align='right'>".number_format($persen5,2)."</td>";
                         }
 
                         $jml_hasil = $dtlap->A+$dtlap->B+$dtlap->C+$dtlap->D+$dtlap->E;
                         $jml_persen = $persen1+$persen2+$persen3+$persen4+$persen5;
-                        echo "<td>".number_format($jml_hasil)."</td>";
-                        echo "<td>".number_format($jml_persen,2)."</td>";
+                        echo "<td align='right'>".number_format($jml_hasil)."</td>";
+                        echo "<td align='right'>".number_format($jml_persen,2)."</td>";
+
+                        //angka partisipasi
+                        if ((($dtlap->sssah+$dtlap->sstdksah) > 0) && ($jml_dpt > 0)){
+                            $partisipasi = ($dtlap->sssah+$dtlap->sstdksah) / ($jml_dpt) * 100;
+                        } else {
+                            $partisipasi = 0;
+                        } 
+                        echo "<td align='right'><strong>".number_format($partisipasi,2)."</strong></td>";
                         echo '<tr>';
+
+                        $totalDPTL      = $totalDPTL+$dtlap->dpt_l;
+                        $totalDPTP      = $totalDPTP+$dtlap->dpt_p;
+                        $totalDPTJml    = $totalDPTJml+$dtlap->dpt_jml;
+                        $totalSSS       = $totalSSS+$dtlap->sssah;
+                        $totalSSTS      = $totalSSTS+$dtlap->sstdksah;
+                        $totalSSTD      = $totalSSTD+$dtlap->sstidakterpakai;
+                        $totalSSJml     = $totalSSJml+$jml_ss;
+                        $totalCalon1    = $totalCalon1+$dtlap->A;
+                        $totalCalon2    = $totalCalon2+$dtlap->B;
+                        $totalCalon3    = $totalCalon3+$dtlap->C;
+                        $totalCalon4    = $totalCalon4+$dtlap->D;
+                        $totalCalon5    = $totalCalon5+$dtlap->E;
+                        $totalCalonJml  = $totalCalonJml+$jml_hasil;
                     }
                     ?>
                 </tbody>
-                <!-- <tfoot>
+                <tfoot>
                     <tr>
+                        <th class="text-right" colspan="3"></th>
+                        <th class="text-right"><?php echo number_format($totalDPTL); ?></th>
+                        <th class="text-right"><?php echo number_format($totalDPTP); ?></th>
+                        <th class="text-right"><?php echo number_format($totalDPTJml); ?></th>
+                        <th class="text-right"><?php echo number_format($totalSSS); ?></th>
+                        <th class="text-right"><?php echo number_format($totalSSTS); ?></th>
+                        <th class="text-right"><?php echo number_format($totalSSTD); ?></th>
+                        <th class="text-right"><?php echo number_format($totalSSJml); ?></th>
+
+                        <th class="text-right"><?php echo number_format($totalCalon1); ?></th>
                         <th class="text-center"></th>
+                        <th class="text-right"><?php echo number_format($totalCalon2); ?></th>
                         <th class="text-center"></th>
+                        <th class="text-right"><?php echo number_format($totalCalon3); ?></th>
                         <th class="text-center"></th>
+                        <th class="text-right"><?php echo number_format($totalCalon4); ?></th>
                         <th class="text-center"></th>
+                        <th class="text-right"><?php echo number_format($totalCalon5); ?></th>
                         <th class="text-center"></th>
-                        <th class="text-center"></th>
-                        <th class="text-center"></th>
-                        <th class="text-center"></th>
-                        <th class="text-center"></th>
-                        <th class="text-center"></th>
-                        <th class="text-center"></th>
-                        <th class="text-center"></th>
-                        <th class="text-center"></th>
-                        <th class="text-center"></th>
-                        <th class="text-center"></th>
-                        <th class="text-center"></th>
-                        <th class="text-center"></th>
-                        <th class="text-center"></th>
-                        <th class="text-center"></th>
-                        <th class="text-center"></th>
-                        <th class="text-center"></th>
+                        <th class="text-right"><?php echo number_format($totalCalonJml); ?></th>
                         <th class="text-center"></th>
                         <th class="text-center"></th>
                     </tr>
-                </tfoot> -->
+                </tfoot>
 	        </table>
         </div><!-- /.col-md-12 -->
     	</div><!-- /.table-responsive -->

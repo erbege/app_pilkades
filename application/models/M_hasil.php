@@ -3,10 +3,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class M_hasil extends CI_Model {
 
-	var $table = 'tbl_calon';
-	var $column_order = array(null,'tbl_calon.nama','tbl_wdesa.nama_desa'	,'tbl_calon.s_hasil',null); //set column field database for datatable orderable
-	var $column_search = array('tbl_calon.nama','tbl_wdesa.nama_desa'); //set column field database for datatable searchable just firstname , lastname , address are searchable
-	var $order = array('tbl_calon.id' => 'desc'); // default order 
+	var $table = 'tbl_desa_penyelenggara';
+	var $column_order = array(null, 'tbl_wdesa.nama_desa','tbl_desa_penyelenggara.dpt_jml','tbl_desa_penyelenggara.sssah','tbl_desa_penyelenggara.sstdksah','tbl_desa_penyelenggara.sstidakterpakai',null,null); //set column field database for datatable orderable
+	var $column_search = array('tbl_wdesa.nama_desa','tbl_wkecamatan.nama_kec'); //set column field database for datatable searchable 
+	var $order = array('tbl_wdesa.nama_desa' => 'asc'); // default order 
 
 	public function __construct()
 	{
@@ -18,16 +18,13 @@ class M_hasil extends CI_Model {
 	{
 		
 		$this->db->from($this->table);
-		// where condition
-		//$this->db->where('kelamin','L');
-		//$this->db->where('thn_pemilihan','2019');
-		$this->db->join('tbl_wkecamatan','tbl_wkecamatan.id_kec=tbl_calon.kdkec', 'left');
-		$this->db->join('tbl_wdesa','tbl_wdesa.id_desa=tbl_calon.kddesa', 'left');
+		$this->db->join('tbl_wkecamatan','tbl_wkecamatan.id_kec=tbl_desa_penyelenggara.kdkec', 'left');
+		$this->db->join('tbl_wdesa','tbl_wdesa.id_desa=tbl_desa_penyelenggara.kddesa', 'left');
 
 		if ($this->session->userdata('id_role') == '3') {
-			$this->db->where('tbl_calon.kdkec',$this->session->userdata('id_kec'));
+			$this->db->where('tbl_desa_penyelenggara.kdkec',$this->session->userdata('id_kec'));
 		}
-		$this->db->where('tbl_calon.thn_pemilihan',$this->session->userdata('thn_data'));
+		$this->db->where('tbl_desa_penyelenggara.thn_pemilihan',$this->session->userdata('thn_data'));
 
 
 		//add custom filter here
@@ -39,9 +36,6 @@ class M_hasil extends CI_Model {
 		{
 			$this->db->like('tbl_wdesa.nama_desa', $this->input->post('nama_desa'));
 		}
-		
-		//$this->db->order_by('tbl_wdesa.nama_desa,tbl_calon.s_hasil','DESC');
-		//$this->db->from($this->table);
 
 		$i = 0;
 	
@@ -102,16 +96,10 @@ class M_hasil extends CI_Model {
 
 	public function get_by_id($id)
 	{
-		$this->db->select('*');
-		$this->db->from('tbl_calon');
-		$this->db->join('tbl_wdesa','tbl_wdesa.id_desa=tbl_calon.kddesa');
-		$this->db->join('tbl_wkecamatan','tbl_wkecamatan.id_kec=tbl_calon.kdkec');
-		$this->db->where('tbl_calon.id',$id);
-
-		//$this->db->from($this->table);
-		//$this->db->join('tbl_pendidikan','tbl_pendidikan.id=tbl_calon.id_pendidikan');
-		//$this->db->where('tbl_calon.id',$id);
-
+		$this->db->from($this->table);
+		$this->db->join('tbl_wdesa','tbl_wdesa.id_desa=tbl_desa_penyelenggara.kddesa');
+		$this->db->join('tbl_wkecamatan','tbl_wkecamatan.id_kec=tbl_desa_penyelenggara.kdkec');
+		$this->db->where('id',$id);
 		$query = $this->db->get();
 
 		return $query->row();
@@ -158,3 +146,6 @@ class M_hasil extends CI_Model {
 		return $data->result();
 	}
 }
+
+/* End of file M_hasil.php */
+/* Location: ./application/models/M_hasil.php */

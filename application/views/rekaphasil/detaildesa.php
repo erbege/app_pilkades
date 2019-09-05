@@ -3,13 +3,6 @@
 </div>
 
 <?php
-
-    /*echo '<pre>';
-    print_r($this->session->userdata());
-    echo '</pre>';*/
-
-?>
-<?php
     foreach($rekapdesa as $data){
         $merk[] = $data->nama;
         //$stok[] = (float) $data->SUARA;
@@ -186,8 +179,6 @@
     });
 
     //var myLine = new Chart(document.getElementById("canvas").getContext("2d")).Line(lineChartData);
-     
-
     
 </script>
 

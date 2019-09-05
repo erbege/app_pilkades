@@ -1,18 +1,5 @@
-<?php
-    /*echo '<pre>';
-    print_r($this->session->userdata());
-    echo '</pre>';*/
-?>
-
 <!-- Default box -->
 <div class="box">
-    <!-- <div class="box-header with-border">
-        <h3 class="box-title"><?php echo $judul ?></h3> 
-        <div class="box-tools pull-right">
-            <button class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse"><i class="fa fa-minus"></i></button>
-            <button class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove"><i class="fa fa-times"></i></button>
-        </div>
-    </div> -->
     <div class="box-body">
         <?php
             if (($this->session->userdata('id_role') == 1) || ($this->session->userdata('id_role') == 2)){
@@ -23,12 +10,6 @@
                 <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-down" data-toggle="tooltip" title="Collapse"></i></span>
             </div>
             <div class="panel-body">
-                <?php
-                // echo 'frmKec -> '.$this->input->post('frmKec');
-                // echo '<br />';
-                // echo 'frmDesa -> '.$this->input->post('frmDesa');
-                ?>
-                
                 <form id="form-filter" class="form-horizontal">
                     <div class="form-group">
                         <label for="nama_kec" class="col-sm-2 control-label">Kecamatan</label>
@@ -60,9 +41,9 @@
                 <span class="pull-right">
                     <?php
                     if (getStatusTransaksi('Pengelolaan Data Calon Kepala Desa')) {
-                     echo '<button class="btn btn-success" onclick="add_person()" disabled><i class="glyphicon glyphicon-plus" ></i> Tambah</button>';
+                     echo '<button class="btn btn-success" onclick="add_person()" ><i class="glyphicon glyphicon-plus" ></i> Tambah</button>';
                     } else {
-                        echo '<button class="btn btn-success" onclick="add_person()"><i class="glyphicon glyphicon-plus" ></i> Tambah</button>';
+                        echo '<button class="btn btn-success" onclick="add_person()" disabled><i class="glyphicon glyphicon-plus" ></i> Tambah</button>';
                     }
                     ?>
 
@@ -76,7 +57,6 @@
         </div>
     	<div class="table-responsive">
             <div class="col-md-12">
-    		<!-- <table class="table table-bordered table-hovered table-condensed" id="table_id">  -->
             <table class="table table-hover table-condensed" id="table">
         		<thead>
                     <tr>
@@ -157,13 +137,6 @@ $(document).ready(function() {
 
     });
 
-    // nested
-    //$("#kdkec").change(function (){
-    //    var url = "<?php echo site_url('calon/add_ajax_desa');?>/"+$(this).val();
-    //    $('#kddesa').load(url);
-    //    return false;
-    //})
-
     //datepicker
     $('.datepicker').datepicker({
         autoclose: true,
@@ -227,8 +200,6 @@ $(document).ready(function() {
         }
     })  
 });
-
-
 
 function add_person()
 {
@@ -328,14 +299,12 @@ function view_person(id)
             var month = date.getMonth(data.tgl_lahir);
             var yy = date.getYear();
             var year = (yy < 1000) ? yy + 1900 : yy;
-            //document.write(thisDay + ', ' + day + ' ' + months[month] + ' ' + year);
 
             $('[name="id"]').val(data.id);
             
             $('#nourut').text(data.nourut);
             $('#mynama').text(data.nama.toUpperCase());
             $('#mynik').text(data.nik);
-            //$('#myttl').text(data.tmp_lahir+', '+dt.toDateString());
             $('#myttl').text(data.tmp_lahir+', '+ day + ' ' + months[month] + ' ' + year);
             if((data.kelamin) == 'L')
             {
@@ -346,17 +315,13 @@ function view_person(id)
                 $('#mykelamin').text('Perempuan');
             }
             $('#myagama').text(data.agama);
-            //$('#myalamat').text(data.alamat1);
             $("#myalamat").html(nl2br(data.alamat1));
             $('#mypendidikan').text(data.nama_pendidikan);
             $('#mypekerjaan').text(data.nama_pekerjaan);
-            //$('#myorganisasi').text(data.organisasi);
             $("#myorganisasi").html(nl2br(data.organisasi));
-            //$('#myketerangan').text(data.keterangan);
             $("#myketerangan").html(nl2br(data.keterangan));
             
             $('#mydaerah').text(data.nama_desa+', '+data.nama_kec);
-            
 
             $('#modal_view').modal('show'); // show bootstrap modal when complete loaded
             $('.modal-title').text('Detail Calon'); // Set title to Bootstrap modal title
@@ -369,7 +334,6 @@ function view_person(id)
             }
             else
             {
-                //$('#photo-calon div').text('(No photo)');
                 $('#photo-calon div').html('<img src="'+base_url+'assets/img/no-photo.jpg" class="img-responsive calon-img">'); // show no-photo
             }
 
@@ -398,9 +362,6 @@ function save()
     } else {
         url = "<?php echo site_url('calon/ajax_update')?>";
     }
-
-    //$('#id_pekerjaan').select2('data', {id: '123', text: 'res_data.primary_email'});
-    // ajax adding data to database
 
     var formData = new FormData($('#form')[0]);
     $.ajax({
@@ -699,17 +660,7 @@ function delete_person(id)
             </div>
             <div class="modal-body">
                 <div class="col-md-12">
-                    
-                    <!-- <div  id="photo-calon" class="col-md-4 well">
-                        <div id="nourut" class="numberCircle text-center">-</div>
-                        <div>
-                            (No photo)
-                            <span class="help-block"></span>
-                        </div>
-                    </div> -->
-
                     <div class="col-md-4">
-                        
                         <div class="text-center">
                             <div class="numberCircle" id="nourut">
                             -
@@ -718,23 +669,8 @@ function delete_person(id)
                                 <div id="photo-calon">
                                     <div>(No photo)</div>
                                 </div>
-
                             </div>
                         </div>
-
-
-
-
-
-                        <!-- <div class="row">
-                            <center>
-                            <div class="col-sm-12 numberCircle text-center" id="nourut">-</div>
-                            </center>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="row" id="photo-calon">
-                            <div class="col-sm-12">(No photo)</div>
-                        </div> -->
                     </div>
                     <div class="col-md-8 detailCalon">
                         <legend id="mydaerah">Daerah Pemilihan </legend>

@@ -5,6 +5,7 @@ class Hasil extends AUTH_Controller {
 	public function __construct() {
 		parent::__construct();
 		$this->load->model('M_hasil','hasil');
+		$this->load->model('M_calon','calon');
 		$this->load->model('M_desa','desa');
 		$this->load->model('M_penyelenggara','desapemilihan');
 	}
@@ -43,17 +44,29 @@ class Hasil extends AUTH_Controller {
 			$no++;
 			$row = array();
 			$row[] = $no;
-			$row[] = $hasil->nama;
-			$row[] = $hasil->nama_desa.',<br /> '.$hasil->nama_kec;
-			$row[] = $hasil->s_hasil;
 
-			if (getStatusTransaksi('Input Hasil Pemilihan')) {
-
-				$row[] = '<a class="btn btn-xs btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_person('."'".$hasil->id."'".')"><i class="glyphicon glyphicon-pencil"></i></a>';	  
+			$row[] = $hasil->nama_desa;
+			$row[] = number_format($hasil->dpt_jml);
+			$row[] = number_format($hasil->sssah);
+			$row[] = number_format($hasil->sstdksah);
+			$row[] = number_format($hasil->sstidakterpakai);
+			$row[] = number_format($hasil->sssah+$hasil->sstdksah+$hasil->sstidakterpakai);
+			if (($hasil->sssah+$hasil->sstdksah+$hasil->sstidakterpakai > 0) && ($hasil->dpt_jml > 0)) {
+				$row[] = number_format((($hasil->sssah+$hasil->sstdksah) / $hasil->dpt_jml) * 100,2);
 			} else {
-				$row[] = 'N/A';
+				$row[] = '<span class="text-danger">N/A</span>';
 			}
-		    
+
+			if ($this->session->userdata('id_role') == '3') {
+				if (getStatusTransaksi('Input Hasil Pemilihan')) {
+
+					$row[] = '<a class="btn btn-xs btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_person('."'".$hasil->id."'".')"><i class="glyphicon glyphicon-pencil"></i></a>';	  
+				} else {
+					$row[] = 'N/A';
+				}
+		    } else {
+		    	$row[] = '<a class="btn btn-xs btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_person('."'".$hasil->id."'".')"><i class="glyphicon glyphicon-pencil"></i></a>';
+		    }
 	  		
 			$data[] = $row;
 
@@ -76,11 +89,22 @@ class Hasil extends AUTH_Controller {
 		echo json_encode($data);
 	}
 
+	public function ajax_edit_calon($desa)
+	{
+		$data = $this->calon->select_by_desa($id);
+
+		echo json_encode($data);
+	}
+
 	public function ajax_update()
 	{
-		//$this->_validate();
+		$this->_validate();
 		$data = array(
-				's_hasil' => $this->input->post('s_hasil'),
+				'suratsuara' => $this->input->post('suratsuara'),
+				'sssah' => $this->input->post('sssah'),
+				'sstdksah' => $this->input->post('sstdksah'),
+				'sstidakterpakai' => $this->input->post('sstidakterpakai'),
+
 			);
 
 		$this->hasil->update(array('id' => $this->input->post('id')), $data);
@@ -95,41 +119,26 @@ class Hasil extends AUTH_Controller {
 		$data['inputerror'] = array();
 		$data['status'] = TRUE;
 
-		if($this->input->post('kddesa') == '')
+		if(($this->input->post('suratsuara') == '') || ($this->input->post('suratsuara') == 0))
 		{
-			$data['inputerror'][] = 'kddesa';
-			$data['error_string'][] = 'Nama desa tidak boleh kosong';
+			$data['inputerror'][] = 'suratsuara';
+			$data['error_string'][] = 'Surat suara tidak boleh kosong';
 			$data['status'] = FALSE;
 		}
 
-		if($this->input->post('nama') == '')
+		if(($this->input->post('sssah') == '') || ($this->input->post('sssah') == 0))
 		{
-			$data['inputerror'][] = 'nama';
-			$data['error_string'][] = 'Nama tidak boleh kosong';
+			$data['inputerror'][] = 'sssah';
+			$data['error_string'][] = 'Suara sah tidak boleh kosong';
 			$data['status'] = FALSE;
 		}
 
-		if($this->input->post('tmp_lahir') == '')
+		if ($this->input->post('suratsuara') < ($this->input->post('sssah')+$this->input->post('sstdksah')))
 		{
-			$data['inputerror'][] = 'tmp_lahir';
-			$data['error_string'][] = 'Tempat Lahir tidak boleh kosong';
+			$data['inputerror'][] = 'sstidakterpakai';
+			$data['error_string'][] = 'Jumlah tidak valid';
 			$data['status'] = FALSE;
 		}
-
-		if($this->input->post('tgl_lahir') == '')
-		{
-			$data['inputerror'][] = 'tgl_lahir';
-			$data['error_string'][] = 'Tanggal Lahir tidak boleh kosong';
-			$data['status'] = FALSE;
-		}
-
-		if($this->input->post('kelamin') == '')
-		{
-			$data['inputerror'][] = 'kelamin';
-			$data['error_string'][] = 'Pilih kelamin';
-			$data['status'] = FALSE;
-		}
-
 
 		if($data['status'] === FALSE)
 		{
@@ -192,7 +201,21 @@ class Hasil extends AUTH_Controller {
 	    }
 	    echo $data;
 	}
+
+	function load_data($kdds)
+	{
+		$data = $this->calon->load_data($kdds);
+		echo json_encode($data);
+	}
+
+	function update_hasil()
+	{
+		$data = array(
+		$this->input->post('table_column') => $this->input->post('value')
+		);
+		$this->calon->update_hasil($data, $this->input->post('id'));
+	}
 }
 
-/* End of file Home.php */
-/* Location: ./application/controllers/Home.php */
+/* End of file Hasil.php */
+/* Location: ./application/controllers/Hasil.php */

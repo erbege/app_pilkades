@@ -18,7 +18,6 @@ class M_laporan extends CI_Model {
 		$this->db->like('tbl_laporan_pivot.nama_kec', $this->input->post('nama_kec'));
 		$this->db->where('tbl_laporan_pivot.thn_pemilihan',$this->session->userdata('thn_data'));
 		$this->db->from('tbl_laporan_pivot');
-		//$this->db->order_by('kddesa', 'asc');
 
 		$data = $this->db->get();
 
@@ -36,6 +35,7 @@ class M_laporan extends CI_Model {
 
 		return $data->result();
 	}
-
-
 }
+
+/* End of file M_laporan.php */
+/* Location: ./application/models/M_laporan.php */

@@ -28,10 +28,6 @@
       <table id="list-data" class="table table-hovered table-condensed">
         <thead  class="bg-black">
           <tr>
-            <!--
-            <th>First Name</th>
-            <th>Last Name</th>
-            -->
             <th style="width:200px;text-align:center;vertical-align: middle;">Username</th>
             <th>Unit Kerja / Kecamatan</th>
             <th style="width:150px;text-align:center;vertical-align: middle;">Role</th>

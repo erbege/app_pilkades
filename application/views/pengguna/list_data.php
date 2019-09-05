@@ -2,10 +2,6 @@
   foreach ($dataPengguna as $dPengguna) {
     ?>
     <tr>
-      <!-- 
-      <td><?php //echo $dPengguna->first_name; ?></td>
-      <td><?php //echo $dPengguna->last_name; ?></td>
-      -->
       <td><?php echo $dPengguna->username; ?></td>
       <td><?php echo $dPengguna->nama_instansi; ?></td>
       <td class="text-center"><?php echo $dPengguna->nama_role; ?></td>

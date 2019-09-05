@@ -82,10 +82,6 @@ class M_transaksi extends CI_Model {
 		$this->db->from($this->table);
 		$this->db->where('id',$id);
 
-		//$this->db->from($this->table);
-		//$this->db->join('tbl_pendidikan','tbl_pendidikan.id=tbl_calon.id_pendidikan');
-		//$this->db->where('tbl_calon.id',$id);
-
 		$query = $this->db->get();
 
 		return $query->row();
@@ -129,5 +125,5 @@ class M_transaksi extends CI_Model {
 
 }
 
-/* End of file M_kecamatan.php */
-/* Location: ./application/models/M_kecamatan.php */
+/* End of file M_transaksi.php */
+/* Location: ./application/models/M_transaksi.php */

@@ -102,5 +102,5 @@ class Tahapan extends AUTH_Controller {
 	}
 }
 
-/* End of file Home.php */
-/* Location: ./application/controllers/Home.php */
+/* End of file Tahapan.php */
+/* Location: ./application/controllers/Tahapan.php */

@@ -17,9 +17,6 @@ class M_admin extends CI_Model {
 		if ($id != '') {
 			$this->db->where('id', $id);
 		}
-
-		//$this->db->join('tbl_opd', 'tbl_opd.id_opd = tbl_user.id_opd');
-		//$data = $this->db->get('tbl_user');
 		$data = $this->db->get();
 
 		return $data->row();

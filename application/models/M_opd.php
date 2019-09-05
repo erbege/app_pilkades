@@ -65,5 +65,5 @@ class M_opd extends CI_Model {
 	}
 }
 
-/* End of file M_kota.php */
-/* Location: ./application/models/M_kota.php */
+/* End of file M_opd.php */
+/* Location: ./application/models/M_opd.php */

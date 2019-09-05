@@ -36,16 +36,7 @@ class Auth extends CI_Controller {
 
 				redirect('Auth');
 			} else {
-				/*
-				$session = [
-					'userdata' => $data,
-					'status' => "Loged in",
-					'thn_pkpt' => $thn_pkpt,
-					'idnya' => $data->id
-				];
 
-				$this->session->set_userdata($session);
-				*/
 				$userdata = array(
 					'is_login'    => true,
 					'id'          => $data->id,
@@ -91,5 +82,5 @@ class Auth extends CI_Controller {
 	}
 }
 
-/* End of file Login.php */
-/* Location: ./application/controllers/Login.php */
+/* End of file Auth.php */
+/* Location: ./application/controllers/Auth.php */

@@ -1,21 +1,5 @@
-
-<?php
-
-    /*echo '<pre>';
-    print_r($this->session->userdata());
-    echo '</pre>';*/
-
-?>
-
 <!-- Default box -->
 <div class="box">
-    <!-- <div class="box-header with-border">
-        <h3 class="box-title"><?php echo $judul ?></h3> 
-        <div class="box-tools pull-right">
-            <button class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse"><i class="fa fa-minus"></i></button>
-            <button class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove"><i class="fa fa-times"></i></button>
-        </div>
-    </div> -->
     <div class="box-body">
         <?php
             if (($this->session->userdata('id_role') == 1) || ($this->session->userdata('id_role') == 2)){
@@ -26,12 +10,6 @@
                 <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-down" data-toggle="tooltip" title="Collapse"></i></span>
             </div>
             <div class="panel-body">
-                <?php
-                // echo 'frmKec -> '.$this->input->post('frmKec');
-                // echo '<br />';
-                // echo 'frmDesa -> '.$this->input->post('frmDesa');
-                ?>
-                
                 <form id="form-filter" class="form-horizontal">
                     <div class="form-group">
                         <label for="nama_kec" class="col-sm-2 control-label">Kecamatan</label>
@@ -70,9 +48,7 @@
             </div>
         </div>
     	<div class="table-responsive">
-    		<!-- <table class="table table-bordered table-hovered table-condensed" id="table_id">  -->
             <div class="col-md-12">
-            <!-- <table id="table" class=" table-condensed table-bordere table-hover" cellspacing="0" width="100%"> -->
             <table class="table table-hover table-condensed" id="table">
         		<thead>
                     <tr>
@@ -199,7 +175,6 @@ $(document).ready(function() {
             }
         },
 
-        
         //Set column definition initialisation properties.
         "columnDefs": [
             { 
@@ -376,13 +351,6 @@ function edit_person(id)
             $('[name="id"]').val(data.id);
             $('[name="suratsuara"]').val(data.suratsuara);
             
-            // kalo ss = 0 isi otomatis sesuai perhitungan 
-            // if (data.suratsuara == 0) {
-            //     $('[name="suratsuara"]').val(parseInt(parseInt(data.dpt_jml)+((parseInt(data.dpt_jml)*2.5)/100)));
-            // } else {
-            //     $('[name="suratsuara"]').val(data.suratsuara);
-            // }
-
             $('[name="sssah"]').val(data.sssah);
             $('[name="sstdksah"]').val(data.sstdksah);
             $('[name="sstidakterpakai"]').val(data.sstidakterpakai);

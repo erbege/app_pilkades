@@ -107,3 +107,6 @@ $sql = "SELECT a.kdkec,a.kddesa,c.nama_desa,a.suratsuara, ";
 		return $data->result();
 	}
 }
+
+/* End of file M_rekap.php */
+/* Location: ./application/models/M_rekap.php */

@@ -2,16 +2,9 @@
 	<?php echo @$this->session->flashdata('msg'); ?>
 </div>
 
-
-
 <!-- Default box -->
 <div class="box">
-	<!-- <div class="box-header with-border">
-		<h3 class="box-title"><?php echo $judul ?></h3> 
-		<div class="box-tools pull-right">
-			<button class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse"><i class="fa fa-minus"></i></button>
-			<button class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove"><i class="fa fa-times"></i></button>
-		</div>
+
 	</div> -->
 	<div class="alert alert-warning alert-dismissible" id="peringatan">
 		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -29,12 +22,6 @@
 				<span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-down" data-toggle="tooltip" title="Collapse"></i></span>
 			</div>
 			<div class="panel-body">
-				<?php
-				// echo 'frmKec -> '.$this->input->post('frmKec');
-				// echo '<br />';
-				// echo 'frmDesa -> '.$this->input->post('frmDesa');
-				?>
-				
 				<form id="form-filter" class="form-horizontal">
 					<div class="form-group">
 						<label for="nama_kec" class="col-sm-2 control-label">Kecamatan</label>
@@ -212,13 +199,6 @@
 	//input4.value = parseInt(input3.value)+parseInt((input3.value*2.5)/100);
 	});
 
-	// nested
-	//$("#kdkec").change(function (){
-    //    var url = "<?php echo site_url('Penyelenggara/add_ajax_des');?>/"+$(this).val();
-    //    $('#kddesa').load(url);
-    //    return false;
-    //})
-	
 	// btn filter
 	$('#btn-filter').click(function(){ //button filter event click
 		table.ajax.reload();  //just reload table
@@ -398,7 +378,6 @@
 
 	function delete_desa(id)
 	{
-	    //if(confirm('Menghapus data desa akan mengakibatkan daftar nama calon pada desaikut  tersebut terhapus. <br/>Are you sure delete this data? '))
 		swal({
 			title: "Anda yakin?",
 			text: "Menghapus data desa akan mengakibatkan DAFTAR CALON pada desa tersebut ikut TERHAPUS.",
@@ -504,9 +483,6 @@
                                 
                                 <span class="help-block"></span>
                             </div>
-                            <!-- <div class="col-md-6">
-                            	<small><em><b class="text-danger">Default:</b>&nbsp;&nbsp;Surat Suara = DPT + (2,5% x DPT)</em></small>
-                            </div> -->
                         </div>
                         <div class="form-group">
                             <label class="control-label col-md-3">Ketua Panitia</label>

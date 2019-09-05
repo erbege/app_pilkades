@@ -17,12 +17,13 @@ class M_rekaphasil extends CI_Model {
 		}
 		$this->db->where('tbl_calon_hasil_pivot.thn_pemilihan',$this->session->userdata('thn_data'));
 		$this->db->from('tbl_calon_hasil_pivot');
-		//$this->db->order_by('kddesa', 'asc');
 
 		$data = $this->db->get();
 
 		return $data->result();
 	}
 
-
 }
+
+/* End of file M_rekaphasil.php */
+/* Location: ./application/models/M_rekaphasil.php */
