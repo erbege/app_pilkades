@@ -2,11 +2,7 @@
 	<?php echo @$this->session->flashdata('msg'); ?>
 </div>
 
-<div class="alert alert-warning alert-dismissible">
-	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-	<h4><i class="icon fa fa-warning"></i> Perhatian!</h4>
-	Mohon berhati-hati saat menghapus data desa, karena akan berpengaruh pada data calon.
-</div>
+
 
 <!-- Default box -->
 <div class="box">
@@ -17,7 +13,13 @@
 			<button class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove"><i class="fa fa-times"></i></button>
 		</div>
 	</div> -->
+	<div class="alert alert-warning alert-dismissible" id="peringatan">
+		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+		<h4><i class="icon fa fa-warning"></i> Perhatian!</h4>
+		Mohon berhati-hati saat menghapus data desa, karena akan berpengaruh pada data calon.
+	</div>
 	<div class="box-body">
+
 		<?php
 			if (($this->session->userdata('id_role') == 1) || ($this->session->userdata('id_role') == 2)){
 		?>
@@ -81,7 +83,7 @@
 		<div class="table-responsive">
 
 			<div class="col-md-12">
-				<table id="table" class="table table-condensed table-bordered	table-hover" cellspacing="0" width="100%">
+				<table id="table" class="table table-condensed table-bordere table-hover" cellspacing="0" width="100%">
 					<thead>
 						<tr>
 							<th width= "30px" rowspan="2">No</th>
@@ -120,8 +122,6 @@
 	</div><!-- /.box-footer-->
 </div><!-- /.box -->
 
-<script src="<?php echo base_url(); ?>assets/plugins/sweetalert/dist/sweetalert.min.js"></script>
-<link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/sweetalert/dist/sweetalert.min.css">
 <script type="text/javascript">
 	var table;
 	$(document).ready(function() {
@@ -200,13 +200,16 @@
 	var input1 = document.getElementById('dpt_l');
 	var input2 = document.getElementById('dpt_p');
 	var input3 = document.getElementById('dpt_jml');
+	//var input4 = document.getElementById('suratsuara');
 
 	input1.addEventListener('change', function() {
 	input3.value = parseInt(input1.value)+parseInt(input2.value);
+	//input4.value = parseInt(input3.value)+parseInt((input3.value*2.5)/100);
 	});
 
 	input2.addEventListener('change', function() {
 	input3.value = parseInt(input1.value)+parseInt(input2.value);
+	//input4.value = parseInt(input3.value)+parseInt((input3.value*2.5)/100);
 	});
 
 	// nested
@@ -254,6 +257,10 @@
 			$this.find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
 		}
 	})	
+
+	$("#peringatan").fadeTo(2000, 500).slideUp(500, function(){
+		$("#peringatan").slideUp(500);
+	});
 
 	function myChangeFunction(input1) {
 		var input2 = document.getElementById('dpt_p');
@@ -493,9 +500,13 @@
                         <div class="form-group">
                             <label class="control-label col-md-3">Jumlah Surat Suara</label>
                             <div class="col-md-3">
-                                <input name="suratsuara" placeholder="Surat Suara" class="form-control" type="number" step="1" min="0">
+                                <input name="suratsuara" id="suratsuara" placeholder="Surat Suara" class="form-control" type="number" step="1" min="0">
+                                
                                 <span class="help-block"></span>
                             </div>
+                            <!-- <div class="col-md-6">
+                            	<small><em><b class="text-danger">Default:</b>&nbsp;&nbsp;Surat Suara = DPT + (2,5% x DPT)</em></small>
+                            </div> -->
                         </div>
                         <div class="form-group">
                             <label class="control-label col-md-3">Ketua Panitia</label>
