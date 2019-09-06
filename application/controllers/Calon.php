@@ -57,7 +57,7 @@ class Calon extends AUTH_Controller {
 			$row[] = $calon->nama_pekerjaan;
 			$row[] = $calon->nama_desa.',<br /> '.$calon->nama_kec;
 			if($calon->photo)
-				$row[] = '<a href="'.base_url('upload/'.$calon->photo).'" target="_blank"><img src="'.base_url('upload/'.$calon->photo).'" class="profile-user-img img-responsive" /></a>';
+				$row[] = '<a href="'.base_url('upload/'.$calon->photo).'" target="_blank"><img src="'.base_url('upload/small/'.$calon->photo).'" class="profile-user-img img-responsive" /></a>';
 			else
 				$row[] = '(No photo)';
 
@@ -199,8 +199,9 @@ class Calon extends AUTH_Controller {
 		
 
 		$config['upload_path']          = 'upload/';
-        $config['allowed_types']        = 'gif|jpg|png';
+        $config['allowed_types']        = 'gif|jpg|png|jpeg|bmp';
         $config['max_size']             = 2048; //set max size allowed in Kilobyte
+        //$config['encrypt_name'] = TRUE; //enkripsi nama file
         //$config['max_width']            = 1000; // set max width image allowed
         //$config['max_height']           = 1000; // set max height allowed
         //$config['file_name']            = round(microtime(true) * 1000); //just milisecond timestamp fot unique name
@@ -216,8 +217,55 @@ class Calon extends AUTH_Controller {
 			echo json_encode($data);
 			exit();
 		}
+		
+		// begin marker
+		$gbr = $this->upload->data();
+		$this->_create_thumbs($gbr['file_name']);
+		//end marker
+
 		return $this->upload->data('file_name');
 	}
+
+	function _create_thumbs($file_name){
+        // Image resizing config
+        $config = array(
+            // Image Large
+            array(
+                'image_library' => 'GD2',
+                'source_image'  => 'upload/'.$file_name,
+                'maintain_ratio'=> FALSE,
+                'width'         => 768,
+                'height'        => 1024,
+                'new_image'     => 'upload/large/'.$file_name
+                ),
+            // image Medium
+            array(
+                'image_library' => 'GD2',
+                'source_image'  => 'upload/'.$file_name,
+                'maintain_ratio'=> FALSE,
+                'width'         => 480,
+                'height'        => 640,
+                'new_image'     => 'upload/medium/'.$file_name
+                ),
+            // Image Small
+            array(
+                'image_library' => 'GD2',
+                'source_image'  => 'upload/'.$file_name,
+                'maintain_ratio'=> FALSE,
+                'width'         => 90,
+                'height'        => 120,
+                'new_image'     => 'upload/small/'.$file_name
+            ));
+ 
+        $this->load->library('image_lib', $config[0]);
+        foreach ($config as $item){
+            $this->image_lib->initialize($item);
+            if(!$this->image_lib->resize()){
+                return false;
+            }
+            $this->image_lib->clear();
+        }
+    }
 
 	private function _validate()
 	{
