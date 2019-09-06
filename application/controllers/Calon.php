@@ -191,10 +191,11 @@ class Calon extends AUTH_Controller {
 
 	private function _do_upload()
 	{
-		$nmft1 = $this->input->post('kddesa');
-		$nmft2 = $this->input->post('nourut');
-		$nmft3 = $this->input->post('nama');
-		$nmft4 = round(microtime(true) * 1000); //just milisecond timestamp fot unique name
+		$nmft1 = $this->input->post('nama');
+		$nmft2 = $this->session->userdata('thn_data');
+		$nmft3 = $this->input->post('kddesa');
+		$nmft4 = $this->input->post('nourut');
+		$nmft5 = round(microtime(true) * 1000); //just milisecond timestamp fot unique name
 		//$nmft1 = 'photo';
 		
 
@@ -205,7 +206,7 @@ class Calon extends AUTH_Controller {
         //$config['max_width']            = 1000; // set max width image allowed
         //$config['max_height']           = 1000; // set max height allowed
         //$config['file_name']            = round(microtime(true) * 1000); //just milisecond timestamp fot unique name
-        $config['file_name']            = $nmft1.'-'.$nmft2.'-'.strtoupper($nmft3).'_'.$nmft4;
+        $config['file_name']            = strtoupper($nmft1).'-'.$nmft2.''.$nmft3.''.$nmft4.'_'.$nmft5;
 
         $this->load->library('upload', $config);
 
@@ -234,8 +235,8 @@ class Calon extends AUTH_Controller {
                 'image_library' => 'GD2',
                 'source_image'  => 'upload/'.$file_name,
                 'maintain_ratio'=> FALSE,
-                'width'         => 768,
-                'height'        => 1024,
+                'width'         => 600,
+                'height'        => 800,
                 'new_image'     => 'upload/large/'.$file_name
                 ),
             // image Medium
@@ -243,8 +244,8 @@ class Calon extends AUTH_Controller {
                 'image_library' => 'GD2',
                 'source_image'  => 'upload/'.$file_name,
                 'maintain_ratio'=> FALSE,
-                'width'         => 480,
-                'height'        => 640,
+                'width'         => 300,
+                'height'        => 400,
                 'new_image'     => 'upload/medium/'.$file_name
                 ),
             // Image Small
