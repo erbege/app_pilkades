@@ -98,376 +98,6 @@
 </div><!-- /.box -->
 
 
-<script type="text/javascript">
-
-var save_method; //for save method string
-var table;
-var base_url = '<?php echo base_url();?>';
-
-$(document).ready(function() {
-
-    //datatables
-    table = $('#table').DataTable({ 
-        
-        "processing": true, //Feature control the processing indicator.
-        "serverSide": true, //Feature control DataTables' server-side processing mode.
-        "order": [], //Initial no order.
-
-        // Load data for the table's content from an Ajax source
-        "ajax": {
-            "url": "<?php echo site_url('calon/ajax_list')?>",
-            "type": "POST",
-            "data": function ( data ) {
-                data.nama_kec = $('#nama_kec').val();
-                data.nama_desa = $('#nama_desa').val();
-            }
-        },
-
-        //Set column definition initialisation properties.
-        "columnDefs": [
-            { 
-                "targets": [ -1 ], //last column
-                "orderable": false, //set not orderable
-            },
-            { 
-                "targets": [ -2 ], //2 last column (photo)
-                "orderable": false, //set not orderable
-            },
-        ],
-
-    });
-
-    //datepicker
-    $('.datepicker').datepicker({
-        autoclose: true,
-        format: "yyyy-mm-dd",
-        todayHighlight: true,
-        orientation: "top auto",
-        todayBtn: false,
-        todayHighlight: true,  
-        language: "id",
-        locale: "id",
-    });
-
-    $('#btn-filter').click(function(){ //button filter event click
-        table.ajax.reload();  //just reload table
-    });
-
-    $('#btn-reset').click(function(){ //button reset event click
-        $('#form-filter')[0].reset();
-        table.ajax.reload();  //just reload table
-    });
-
-    //set input/textarea/select event when change value, remove class error and remove text help block 
-    $("input").change(function(){
-        $(this).parent().parent().removeClass('has-error');
-        $(this).next().empty();
-    });
-    $("textarea").change(function(){
-        $(this).parent().parent().removeClass('has-error');
-        $(this).next().empty();
-    });
-
-    $('textarea').keypress(function(event) {
-  if (event.which == 13) {
-    event.preventDefault();
-      var s = $(this).val();
-      $(this).val(s+"\n");
-  }
-});
-    $("select").change(function(){
-        $(this).parent().parent().removeClass('has-error');
-        $(this).next().empty();
-    });
-
-    //nested combobox
-    $("#id_kec").change(function (){
-        var url = "<?php echo site_url('calon/add_ajax_desa');?>/"+$(this).val();
-        $('#id_desa').load(url);
-        return false;
-    });
-
-    $(document).on('click', '.panel-heading span.clickable', function(e){
-        var $this = $(this);
-        if(!$this.hasClass('panel-collapsed')) {
-            $this.parents('.panel').find('.panel-body').slideUp();
-            $this.addClass('panel-collapsed');
-            $this.find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
-        } else {
-            $this.parents('.panel').find('.panel-body').slideDown();
-            $this.removeClass('panel-collapsed');
-            $this.find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
-        }
-    })  
-});
-
-function add_person()
-{
-    save_method = 'add';
-    $('#form')[0].reset(); // reset form on modals
-    $('.form-group').removeClass('has-error'); // clear error class
-    $('.help-block').empty(); // clear error string
-    $('#modal_form').modal('show'); // show bootstrap modal
-    $('.modal-title').text('Tambah Calon'); // Set Title to Bootstrap modal title
-
-    $('#photo-preview').hide(); // hide photo preview modal
-
-    $('#label-photo').text('Upload Photo'); // label photo upload
-}
-
-function edit_person(id)
-{
-    save_method = 'update';
-    $('#form')[0].reset(); // reset form on modals
-    $('.form-group').removeClass('has-error'); // clear error class
-    $('.help-block').empty(); // clear error string
-
- 
-    //Ajax Load data from ajax
-    $.ajax({
-        url : "<?php echo site_url('calon/ajax_edit')?>/" + id,
-        type: "GET",
-        dataType: "JSON",
-        success: function(data)
-        {
-            $('[name="id"]').val(data.id);
-            $('[name="nourut"]').val(data.nourut);
-            $('[name="nama"]').val(data.nama);
-            $('[name="nik"]').val(data.nik);
-            $('[name="tmp_lahir"]').val(data.tmp_lahir);
-            $('[name="tgl_lahir"]').datepicker('update',data.tgl_lahir);
-            $('[name="kelamin"]').val(data.kelamin);
-            $('[name="agama"]').val(data.agama);
-            $('[name="alamat1"]').val(data.alamat1);
-            $('[name="id_pendidikan"]').val(data.id_pendidikan);
-            $('[name="id_pekerjaan"]').val(data.id_pekerjaan);
-            $('[name="id_pekerjaan"]').selectedIndex = data.id_pekerjaan;
-            $('[name="organisasi"]').val(data.organisasi);
-            $('[name="keterangan"]').val(data.keterangan);
-            
-            $('[name="id_kab"]').val(data.kdkab);
-            $('[name="kdkec"]').val(data.kdkec);
-            $('[name="kddesa"]').val(data.kddesa);
-            $('[name="thn_pemilihan"]').val(data.thn_pemilihan);
-
-            $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
-            $('.modal-title').text('Edit Calon'); // Set title to Bootstrap modal title
-
-            $('#photo-preview').show(); // show photo preview modal
-
-            if(data.photo)
-            {
-                $('#label-photo').text('Change Photo'); // label photo upload
-                $('#photo-preview div').html('<img src="'+base_url+'upload/'+data.photo+'" class="img-responsive">'); // show photo
-                $('#photo-preview div').append('<input type="checkbox" class="minimal" name="remove_photo" value="'+data.photo+'"/> Hapus photo saat menyimpan'); // remove photo
-
-            }
-            else
-            {
-                $('#label-photo').text('Upload Photo'); // label photo upload
-                $('#photo-preview div').text('(No photo)');
-            }
-
-
-        },
-        error: function (jqXHR, textStatus, errorThrown)
-        {
-            alert('Error get data from ajax yeuh!!!');
-        }
-    });
-}
-
-function view_person(id)
-{
-    save_method = 'update';
-    $('#form')[0].reset(); // reset form on modals
-    $('.form-group').removeClass('has-error'); // clear error class
-    $('.help-block').empty(); // clear error string
-
-
-    //Ajax Load data from ajax
-    $.ajax({
-        url : "<?php echo site_url('calon/ajax_edit')?>/" + id,
-        type: "GET",
-        dataType: "JSON",
-        success: function(data)
-        {
-            var months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-
-            var date = new Date(data.tgl_lahir);
-            var day = date.getDate(data.tgl_lahir);
-            var month = date.getMonth(data.tgl_lahir);
-            var yy = date.getYear();
-            var year = (yy < 1000) ? yy + 1900 : yy;
-
-            $('[name="id"]').val(data.id);
-            
-            $('#nourut').text(data.nourut);
-            $('#mynama').text(data.nama.toUpperCase());
-            $('#mynik').text(data.nik);
-            $('#myttl').text(data.tmp_lahir+', '+ day + ' ' + months[month] + ' ' + year);
-            if((data.kelamin) == 'L')
-            {
-                $('#mykelamin').text('Laki-laki');
-            }
-            else
-            {
-                $('#mykelamin').text('Perempuan');
-            }
-            $('#myagama').text(data.agama);
-            $("#myalamat").html(nl2br(data.alamat1));
-            $('#mypendidikan').text(data.nama_pendidikan);
-            $('#mypekerjaan').text(data.nama_pekerjaan);
-            $("#myorganisasi").html(nl2br(data.organisasi));
-            $("#myketerangan").html(nl2br(data.keterangan));
-            
-            $('#mydaerah').text(data.nama_desa+', '+data.nama_kec);
-
-            $('#modal_view').modal('show'); // show bootstrap modal when complete loaded
-            $('.modal-title').text('Detail Calon'); // Set title to Bootstrap modal title
-
-            $('#photo-calon').show(); // show photo preview modal
-
-            if(data.photo)
-            {
-                $('#photo-calon div').html('<img src="'+base_url+'upload/'+data.photo+'" class="img-responsive calon-img">'); // show photo
-            }
-            else
-            {
-                $('#photo-calon div').html('<img src="'+base_url+'assets/img/no-photo.jpg" class="img-responsive calon-img">'); // show no-photo
-            }
-
-
-        },
-        error: function (jqXHR, textStatus, errorThrown)
-        {
-            alert('Error get data from ajax yeuh!!!');
-        }
-    });
-}
-
-function reload_table()
-{
-    table.ajax.reload(null,false); //reload datatable ajax 
-}
-
-function save()
-{
-    $('#btnSave').text('saving...'); //change button text
-    $('#btnSave').attr('disabled',true); //set button disable 
-    var url;
-
-    if(save_method == 'add') {
-        url = "<?php echo site_url('calon/ajax_add')?>";
-    } else {
-        url = "<?php echo site_url('calon/ajax_update')?>";
-    }
-
-    var formData = new FormData($('#form')[0]);
-    $.ajax({
-        url : url,
-        type: "POST",
-        data: formData,
-        contentType: false,
-        processData: false,
-        dataType: "JSON",
-        success: function(data)
-        {
-
-            if(data.status) //if success close modal and reload ajax table
-            {
-                $('#modal_form').modal('hide');
-                reload_table();
-            }
-            else
-            {
-                for (var i = 0; i < data.inputerror.length; i++) 
-                {
-                    $('[name="'+data.inputerror[i]+'"]').parent().parent().addClass('has-error'); //select parent twice to select div form-group class and add has-error class
-                    $('[name="'+data.inputerror[i]+'"]').next().text(data.error_string[i]); //select span help-block class set text error string
-                }
-            }
-            $('#btnSave').text('save'); //change button text
-            $('#btnSave').attr('disabled',false); //set button enable 
-
-
-        },
-        error: function (jqXHR, textStatus, errorThrown)
-        {
-            alert('Error adding / update data');
-            $('#btnSave').text('save'); //change button text
-            $('#btnSave').attr('disabled',false); //set button enable 
-
-        }
-    });
-}
-
-function xdelete_person(id)
-{
-    if(confirm('Are you sure delete this data?'))
-    {
-        // ajax delete data to database
-        $.ajax({
-            url : "<?php echo site_url('calon/ajax_delete')?>/"+id,
-            type: "POST",
-            dataType: "JSON",
-            success: function(data)
-            {
-                //if success reload ajax table
-                $('#modal_form').modal('hide');
-                reload_table();
-            },
-            error: function (jqXHR, textStatus, errorThrown)
-            {
-                alert('Error deleting data');
-            }
-        });
-
-    }
-}
-
-function delete_person(id)
-    {
-        swal({
-            title: "Anda yakin?",
-            text: "Data yang sudah terhapus tidak akan bisa dikembalikan.",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonClass: "btn-danger",
-            confirmButtonText: "Ya, hapus!",
-            cancelButtonText: "Tidak",
-            closeOnConfirm: false,
-            closeOnCancel: false
-        },
-
-        function(isConfirm) {
-
-        if (isConfirm) {
-
-            $.ajax({
-                url : "<?php echo site_url('calon/ajax_delete')?>/"+id,
-                type: "POST",
-                dataType: "JSON",
-                error: function(jqXHR, textStatus, errorThrown) {
-                    alert('Error deleting data');
-                },
-
-                success: function(data) {
-                    $('#modal_form').modal('hide');
-                    reload_table();
-                    swal("Terhapus!", "Data berhasil dihapus.", "success");
-                }
-            });
-        } else {
-            swal("Dibatalkan", "Data batal dihapus :)", "error");
-        }
-
-    });
-
-}   
-
-</script>
-
 <!-- Bootstrap modal -->
 <div class="modal" id="modal_form" role="dialog" tabindex="-1" >
     <div class="modal-dialog modal-lg">
@@ -727,3 +357,374 @@ function delete_person(id)
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 <!-- End Bootstrap modal -->
+
+
+<script type="text/javascript">
+
+var save_method; //for save method string
+var table;
+var base_url = '<?php echo base_url();?>';
+
+$(document).ready(function() {
+
+    //datatables
+    table = $('#table').DataTable({ 
+        
+        "processing": true, //Feature control the processing indicator.
+        "serverSide": true, //Feature control DataTables' server-side processing mode.
+        "order": [], //Initial no order.
+
+        // Load data for the table's content from an Ajax source
+        "ajax": {
+            "url": "<?php echo site_url('calon/ajax_list')?>",
+            "type": "POST",
+            "data": function ( data ) {
+                data.nama_kec = $('#nama_kec').val();
+                data.nama_desa = $('#nama_desa').val();
+            }
+        },
+
+        //Set column definition initialisation properties.
+        "columnDefs": [
+            { 
+                "targets": [ -1 ], //last column
+                "orderable": false, //set not orderable
+            },
+            { 
+                "targets": [ -2 ], //2 last column (photo)
+                "orderable": false, //set not orderable
+            },
+        ],
+
+    });
+
+    //datepicker
+    $('.datepicker').datepicker({
+        autoclose: true,
+        format: "yyyy-mm-dd",
+        todayHighlight: true,
+        orientation: "top auto",
+        todayBtn: false,
+        todayHighlight: true,  
+        language: "id",
+        locale: "id",
+    });
+
+    $('#btn-filter').click(function(){ //button filter event click
+        table.ajax.reload();  //just reload table
+    });
+
+    $('#btn-reset').click(function(){ //button reset event click
+        $('#form-filter')[0].reset();
+        table.ajax.reload();  //just reload table
+    });
+
+    //set input/textarea/select event when change value, remove class error and remove text help block 
+    $("input").change(function(){
+        $(this).parent().parent().removeClass('has-error');
+        $(this).next().empty();
+    });
+    $("textarea").change(function(){
+        $(this).parent().parent().removeClass('has-error');
+        $(this).next().empty();
+    });
+
+    $('textarea').keypress(function(event) {
+  if (event.which == 13) {
+    event.preventDefault();
+      var s = $(this).val();
+      $(this).val(s+"\n");
+  }
+});
+    $("select").change(function(){
+        $(this).parent().parent().removeClass('has-error');
+        $(this).next().empty();
+    });
+
+    //nested combobox
+    $("#id_kec").change(function (){
+        var url = "<?php echo site_url('calon/add_ajax_desa');?>/"+$(this).val();
+        $('#id_desa').load(url);
+        return false;
+    });
+
+    $(document).on('click', '.panel-heading span.clickable', function(e){
+        var $this = $(this);
+        if(!$this.hasClass('panel-collapsed')) {
+            $this.parents('.panel').find('.panel-body').slideUp();
+            $this.addClass('panel-collapsed');
+            $this.find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+        } else {
+            $this.parents('.panel').find('.panel-body').slideDown();
+            $this.removeClass('panel-collapsed');
+            $this.find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+        }
+    })  
+});
+
+function add_person()
+{
+    save_method = 'add';
+    $('#form')[0].reset(); // reset form on modals
+    $('.form-group').removeClass('has-error'); // clear error class
+    $('.help-block').empty(); // clear error string
+    $('#modal_form').modal('show'); // show bootstrap modal
+    $('.modal-title').text('Tambah Calon'); // Set Title to Bootstrap modal title
+
+    $('#photo-preview').hide(); // hide photo preview modal
+
+    $('#label-photo').text('Upload Photo'); // label photo upload
+}
+
+function edit_person(id)
+{
+    save_method = 'update';
+    $('#form')[0].reset(); // reset form on modals
+    $('.form-group').removeClass('has-error'); // clear error class
+    $('.help-block').empty(); // clear error string
+
+ 
+    //Ajax Load data from ajax
+    $.ajax({
+        url : "<?php echo site_url('calon/ajax_edit')?>/" + id,
+        type: "GET",
+        dataType: "JSON",
+        success: function(data)
+        {
+            $('[name="id"]').val(data.id);
+            $('[name="nourut"]').val(data.nourut);
+            $('[name="nama"]').val(data.nama);
+            $('[name="nik"]').val(data.nik);
+            $('[name="tmp_lahir"]').val(data.tmp_lahir);
+            $('[name="tgl_lahir"]').datepicker('update',data.tgl_lahir);
+            $('[name="kelamin"]').val(data.kelamin);
+            $('[name="agama"]').val(data.agama);
+            $('[name="alamat1"]').val(data.alamat1);
+            $('[name="id_pendidikan"]').val(data.id_pendidikan);
+            $('[name="id_pekerjaan"]').val(data.id_pekerjaan);
+            $('[name="id_pekerjaan"]').selectedIndex = data.id_pekerjaan;
+            $('[name="organisasi"]').val(data.organisasi);
+            $('[name="keterangan"]').val(data.keterangan);
+            
+            $('[name="id_kab"]').val(data.kdkab);
+            $('[name="kdkec"]').val(data.kdkec);
+            $('[name="kddesa"]').val(data.kddesa);
+            $('[name="thn_pemilihan"]').val(data.thn_pemilihan);
+
+            $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
+            $('.modal-title').text('Edit Calon'); // Set title to Bootstrap modal title
+
+            $('#photo-preview').show(); // show photo preview modal
+
+            if(data.photo)
+            {
+                $('#label-photo').text('Change Photo'); // label photo upload
+                $('#photo-preview div').html('<img src="'+base_url+'upload/medium/'+data.photo+'" class="img-responsive">'); // show photo
+                $('#photo-preview div').append('<input type="checkbox" class="minimal" name="remove_photo" value="'+data.photo+'"/> Hapus photo saat menyimpan'); // remove photo
+
+            }
+            else
+            {
+                $('#label-photo').text('Upload Photo'); // label photo upload
+                $('#photo-preview div').text('(No photo)');
+            }
+
+
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+            alert('Error get data from ajax yeuh!!!');
+        }
+    });
+}
+
+function view_person(id)
+{
+    save_method = 'update';
+    $('#form')[0].reset(); // reset form on modals
+    $('.form-group').removeClass('has-error'); // clear error class
+    $('.help-block').empty(); // clear error string
+
+
+    //Ajax Load data from ajax
+    $.ajax({
+        url : "<?php echo site_url('calon/ajax_edit')?>/" + id,
+        type: "GET",
+        dataType: "JSON",
+        success: function(data)
+        {
+            var months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+            var date = new Date(data.tgl_lahir);
+            var day = date.getDate(data.tgl_lahir);
+            var month = date.getMonth(data.tgl_lahir);
+            var yy = date.getYear();
+            var year = (yy < 1000) ? yy + 1900 : yy;
+
+            $('[name="id"]').val(data.id);
+            
+            $('#nourut').text(data.nourut);
+            $('#mynama').text(data.nama.toUpperCase());
+            $('#mynik').text(data.nik);
+            $('#myttl').text(data.tmp_lahir+', '+ day + ' ' + months[month] + ' ' + year);
+            if((data.kelamin) == 'L')
+            {
+                $('#mykelamin').text('Laki-laki');
+            }
+            else
+            {
+                $('#mykelamin').text('Perempuan');
+            }
+            $('#myagama').text(data.agama);
+            $("#myalamat").html(nl2br(data.alamat1));
+            $('#mypendidikan').text(data.nama_pendidikan);
+            $('#mypekerjaan').text(data.nama_pekerjaan);
+            $("#myorganisasi").html(nl2br(data.organisasi));
+            $("#myketerangan").html(nl2br(data.keterangan));
+            
+            $('#mydaerah').text(data.nama_desa+', '+data.nama_kec);
+
+            $('#modal_view').modal('show'); // show bootstrap modal when complete loaded
+            $('.modal-title').text('Detail Calon'); // Set title to Bootstrap modal title
+
+            $('#photo-calon').show(); // show photo preview modal
+
+            if(data.photo)
+            {
+                $('#photo-calon div').html('<img src="'+base_url+'upload/medium/'+data.photo+'" class="img-responsive calon-img">'); // show photo
+            }
+            else
+            {
+                $('#photo-calon div').html('<img src="'+base_url+'assets/img/no-photo.jpg" class="img-responsive calon-img">'); // show no-photo
+            }
+
+
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+            alert('Error get data from ajax yeuh!!!');
+        }
+    });
+}
+
+function reload_table()
+{
+    table.ajax.reload(null,false); //reload datatable ajax 
+}
+
+function save()
+{
+    $('#btnSave').text('saving...'); //change button text
+    $('#btnSave').attr('disabled',true); //set button disable 
+    var url;
+
+    if(save_method == 'add') {
+        url = "<?php echo site_url('calon/ajax_add')?>";
+    } else {
+        url = "<?php echo site_url('calon/ajax_update')?>";
+    }
+
+    var formData = new FormData($('#form')[0]);
+    $.ajax({
+        url : url,
+        type: "POST",
+        data: formData,
+        contentType: false,
+        processData: false,
+        dataType: "JSON",
+        success: function(data)
+        {
+
+            if(data.status) //if success close modal and reload ajax table
+            {
+                $('#modal_form').modal('hide');
+                reload_table();
+            }
+            else
+            {
+                for (var i = 0; i < data.inputerror.length; i++) 
+                {
+                    $('[name="'+data.inputerror[i]+'"]').parent().parent().addClass('has-error'); //select parent twice to select div form-group class and add has-error class
+                    $('[name="'+data.inputerror[i]+'"]').next().text(data.error_string[i]); //select span help-block class set text error string
+                }
+            }
+            $('#btnSave').text('save'); //change button text
+            $('#btnSave').attr('disabled',false); //set button enable 
+
+
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+            alert('Error adding / update data');
+            $('#btnSave').text('save'); //change button text
+            $('#btnSave').attr('disabled',false); //set button enable 
+
+        }
+    });
+}
+
+function xdelete_person(id)
+{
+    if(confirm('Are you sure delete this data?'))
+    {
+        // ajax delete data to database
+        $.ajax({
+            url : "<?php echo site_url('calon/ajax_delete')?>/"+id,
+            type: "POST",
+            dataType: "JSON",
+            success: function(data)
+            {
+                //if success reload ajax table
+                $('#modal_form').modal('hide');
+                reload_table();
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                alert('Error deleting data');
+            }
+        });
+
+    }
+}
+
+function delete_person(id)
+    {
+        swal({
+            title: "Anda yakin?",
+            text: "Data yang sudah terhapus tidak akan bisa dikembalikan.",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Ya, hapus!",
+            cancelButtonText: "Tidak",
+            closeOnConfirm: false,
+            closeOnCancel: false
+        },
+
+        function(isConfirm) {
+
+        if (isConfirm) {
+
+            $.ajax({
+                url : "<?php echo site_url('calon/ajax_delete')?>/"+id,
+                type: "POST",
+                dataType: "JSON",
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert('Error deleting data');
+                },
+
+                success: function(data) {
+                    $('#modal_form').modal('hide');
+                    reload_table();
+                    swal("Terhapus!", "Data berhasil dihapus.", "success");
+                }
+            });
+        } else {
+            swal("Dibatalkan", "Data batal dihapus :)", "error");
+        }
+
+    });
+
+}   
+
+</script>
