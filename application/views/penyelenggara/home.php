@@ -48,21 +48,31 @@
 		?>
 		<div class="panel panel-primary">
 			<div class="panel-body">
-				<span class="pull-right">
+				<div class="col-md-6 col-xs-12">
+					<?php 
+	        		echo '<h4 class="text-muted"><b>Data Penyelenggaraan Pilkades Serentak Tahun '.$this->session->userdata('thn_data').'</b></h4>';
+	        		?>
+	        	</div>
+	        	<div class="col-md-2 col-xs-12">
 				<?php
-                    if (getStatusTransaksi('Pengelolaan Data Pokok/DPT')) {
+					if ($this->session->userdata('id_role') == 3) {
+		                if (getStatusTransaksi('Pengelolaan Data Pokok/DPT')) {
 
-						echo '<button class="btn btn-success" onclick="add_desa()"><i class="glyphicon glyphicon-plus"></i> Tambah</button>';
+							echo '<button class="btn btn-success btn-block" onclick="add_desa()"><i class="glyphicon glyphicon-plus"></i> Tambah</button>';
+						} else {
+							echo '<button class="btn btn-success btn-block" onclick="add_desa()" disabled><i class="glyphicon glyphicon-plus"></i> Tambah</button>';
+						}
 					} else {
-						echo '<button class="btn btn-success" onclick="add_desa()" disabled><i class="glyphicon glyphicon-plus"></i> Tambah</button>';
+						echo '<button class="btn btn-success btn-block" onclick="add_desa()"><i class="glyphicon glyphicon-plus"></i> Tambah</button>';
 					}
-					?>
-        		<button class="btn btn-default" onclick="reload_table()"><i class="glyphicon glyphicon-refresh"></i> Reload</button>
-        		<a href="<?php echo base_url('penyelenggara/export'); ?>" class="btn btn-default"><i class="fa fa-file-excel-o"></i> Export Excel</a>
-        		</span>
-        		<?php 
-        		echo '<h4 class="text-muted"><b>Data Penyelenggaraan Pilkades Serentak Tahun '.$this->session->userdata('thn_data').'</b></h4>';
-        		?>
+				?>
+				</div>
+				<div class="col-md-2 col-xs-12">
+        			<button class="btn btn-default btn-block" onclick="reload_table()"><i class="glyphicon glyphicon-refresh"></i> Reload</button>
+        		</div>
+        		<div class="col-md-2 col-xs-12">
+        			<a href="<?php echo base_url('penyelenggara/export'); ?>" class="btn btn-default btn-block"><i class="fa fa-file-excel-o"></i> Export Excel</a>
+        		</div>
 			</div>
 		</div>
 		<div class="table-responsive">

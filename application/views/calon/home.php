@@ -38,21 +38,32 @@
         ?>
         <div class="panel panel-primary">
             <div class="panel-body">
-                <span class="pull-right">
+                    <div class="col-md-6 col-xs-12">
+                    <?php 
+                    echo '<h4 class="text-muted"><b>Daftar Calon Kepala Desa Tahun '.$this->session->userdata('thn_data').'</b></h4>';
+                    ?>
+                    </div>
+                    <div class="col-md-2 col-xs-12">
                     <?php
-                    if (getStatusTransaksi('Pengelolaan Data Calon Kepala Desa')) {
-                     echo '<button class="btn btn-success" onclick="add_person()" ><i class="glyphicon glyphicon-plus" ></i> Tambah</button>';
+
+                    if ($this->session->userdata('id_role') == 3) {
+                        if (getStatusTransaksi('Pengelolaan Data Calon Kepala Desa')) {
+                         echo '<button class="btn btn-success btn-block" onclick="add_person()" ><i class="glyphicon glyphicon-plus" ></i> Tambah</button>';
+                        } else {
+                            echo '<button class="btn btn-success btn-block" onclick="add_person()" disabled><i class="glyphicon glyphicon-plus" ></i> Tambah</button>';
+                        }
                     } else {
-                        echo '<button class="btn btn-success" onclick="add_person()" disabled><i class="glyphicon glyphicon-plus" ></i> Tambah</button>';
+                        echo '<button class="btn btn-success btn-block" onclick="add_person()"><i class="glyphicon glyphicon-plus" ></i> Tambah</button>';
                     }
                     ?>
-
-                <button class="btn btn-default" onclick="reload_table()"><i class="glyphicon glyphicon-refresh"></i> Reload</button>
-                <a href="<?php echo base_url('calon/export'); ?>" class="btn btn-default"><i class="fa fa-file-excel-o"></i> Export Excel</a>
-                </span>
-                <?php 
-                echo '<h4 class="text-muted"><b>Daftar Calon Kepala Desa Tahun '.$this->session->userdata('thn_data').'</b></h4>';
-                ?>
+                    </div>
+                    <div class="col-md-2 col-xs-12">
+                <button class="btn btn-default btn-block" onclick="reload_table()"><i class="glyphicon glyphicon-refresh"></i> Reload</button>
+            </div>
+            <div class="col-lg-2 col-xs-12">
+                <a href="<?php echo base_url('calon/export'); ?>" class="btn btn-default  btn-block"><i class="fa fa-file-excel-o"></i> Export Excel</a>
+                
+                </div>
             </div>
         </div>
     	<div class="table-responsive">
@@ -506,7 +517,7 @@ function edit_person(id)
             $('[name="organisasi"]').val(data.organisasi);
             $('[name="keterangan"]').val(data.keterangan);
             
-            $('[name="id_kab"]').val(data.kdkab);
+            //$('[name="id_kab"]').val(data.kdkab);
             $('[name="kdkec"]').val(data.kdkec);
             $('[name="kddesa"]').val(data.kddesa);
             $('[name="thn_pemilihan"]').val(data.thn_pemilihan);
@@ -634,7 +645,6 @@ function save()
         dataType: "JSON",
         success: function(data)
         {
-
             if(data.status) //if success close modal and reload ajax table
             {
                 $('#modal_form').modal('hide');
@@ -655,7 +665,8 @@ function save()
         },
         error: function (jqXHR, textStatus, errorThrown)
         {
-            alert('Error adding / update data');
+            //alert('Error adding / update data');
+			alert("Error requesting " + errorThrown.url + ": " + jqXHR.status + " " + jqXHR.statusText);
             $('#btnSave').text('save'); //change button text
             $('#btnSave').attr('disabled',false); //set button enable 
 
