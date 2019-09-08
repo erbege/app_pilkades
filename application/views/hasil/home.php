@@ -38,13 +38,18 @@
         ?>
         <div class="panel panel-primary">
             <div class="panel-body">
-                <span class="pull-right">
-                <button class="btn btn-default" onclick="reload_table()"><i class="glyphicon glyphicon-refresh"></i> Reload</button>
-                <a href="#" class="btn btn-default"><i class="fa fa-file-excel-o"></i> Export Excel</a>
-                </span>
-                <?php 
-                echo '<h4 class="text-muted"><b>Hasil Pemilihan Kepala Desa Tahun '.$this->session->userdata('thn_data').'</b></h4>';
-                ?>
+                <div class="col-md-6 col-xs-12">
+                    <?php 
+                    echo '<h4 class="text-muted"><b>Hasil Pemilihan Kepala Desa Tahun '.$this->session->userdata('thn_data').'</b></h4>';
+                    ?>
+                </div>
+                <div class="col-md-2 col-xs-12">
+                    <button class="btn btn-default btn-block" onclick="reload_table()"><i class="glyphicon glyphicon-refresh"></i> Reload</button>
+                </div>
+                <div class="col-md-2 col-xs-12">
+                    <a href="#" class="btn btn-default btn-block"><i class="fa fa-file-excel-o"></i> Export Excel</a>
+                </div>
+                
             </div>
         </div>
     	<div class="table-responsive">
