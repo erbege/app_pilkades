@@ -1,6 +1,9 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 class Penyelenggara extends AUTH_Controller {
 	public function __construct() {
 		parent::__construct();
@@ -160,45 +163,49 @@ class Penyelenggara extends AUTH_Controller {
 
 	public function export() {
 		error_reporting(E_ALL);
-    
-		include_once './assets/phpexcel/Classes/PHPExcel.php';
-		$objPHPExcel = new PHPExcel();
 
 		$data = $this->desapemilihan->select_by_kategori();
-
-		$objPHPExcel = new PHPExcel(); 
-		$objPHPExcel->setActiveSheetIndex(0); 
+		
+		$spreadsheet  = new Spreadsheet();
+		$spreadsheet->setActiveSheetIndex(0); 
 		$rowCount = 1; 
 
-		$objPHPExcel->getActiveSheet()->SetCellValue('A'.$rowCount, "NO");
-		$objPHPExcel->getActiveSheet()->SetCellValue('B'.$rowCount, "KECAMATAN");
-		$objPHPExcel->getActiveSheet()->SetCellValue('C'.$rowCount, "DESA");
-		$objPHPExcel->getActiveSheet()->SetCellValue('D'.$rowCount, "PEMILIH LAKI-LAKI");
-		$objPHPExcel->getActiveSheet()->SetCellValue('E'.$rowCount, "PEMILIH PEREMPUAN");
-		$objPHPExcel->getActiveSheet()->SetCellValue('F'.$rowCount, "JUMLAH PEMILIH");
-		$objPHPExcel->getActiveSheet()->SetCellValue('F'.$rowCount, "JUMLAH SURAT SUARA");
-		$objPHPExcel->getActiveSheet()->SetCellValue('H'.$rowCount, "KETUA PANITIA");
+		$spreadsheet->getActiveSheet()->SetCellValue('A'.$rowCount, "NO");
+		$spreadsheet->getActiveSheet()->SetCellValue('B'.$rowCount, "KECAMATAN");
+		$spreadsheet->getActiveSheet()->SetCellValue('C'.$rowCount, "DESA");
+		$spreadsheet->getActiveSheet()->SetCellValue('D'.$rowCount, "PEMILIH LAKI-LAKI");
+		$spreadsheet->getActiveSheet()->SetCellValue('E'.$rowCount, "PEMILIH PEREMPUAN");
+		$spreadsheet->getActiveSheet()->SetCellValue('F'.$rowCount, "JUMLAH PEMILIH");
+		$spreadsheet->getActiveSheet()->SetCellValue('F'.$rowCount, "JUMLAH SURAT SUARA");
+		$spreadsheet->getActiveSheet()->SetCellValue('H'.$rowCount, "KETUA PANITIA");
 		$rowCount++;
 
 		foreach($data as $value){
-		    $objPHPExcel->getActiveSheet()->SetCellValue('A'.$rowCount, $rowCount-1); 
-		    $objPHPExcel->getActiveSheet()->SetCellValue('B'.$rowCount, $value->nama_kec); 
-		    $objPHPExcel->getActiveSheet()->SetCellValue('C'.$rowCount, $value->nama_desa); 
-		    $objPHPExcel->getActiveSheet()->SetCellValue('D'.$rowCount, $value->dpt_l); 
-		    $objPHPExcel->getActiveSheet()->SetCellValue('E'.$rowCount, $value->dpt_p); 
-		    $objPHPExcel->getActiveSheet()->SetCellValue('F'.$rowCount, $value->dpt_l+$value->dpt_p); 
-		    $objPHPExcel->getActiveSheet()->getStyle('F')->getNumberFormat()->setFormatCode('#,##0.00');
-		    $objPHPExcel->getActiveSheet()->SetCellValue('G'.$rowCount, $value->suratsuara); 
-		    $objPHPExcel->getActiveSheet()->getStyle('G')->getNumberFormat()->setFormatCode('[Blue][>=1000]#,##0;[Red][<0]#,##0;#,##0');
-		    $objPHPExcel->getActiveSheet()->SetCellValue('H'.$rowCount, $value->ketua); 
+		    $spreadsheet->getActiveSheet()->SetCellValue('A'.$rowCount, $rowCount-1); 
+		    $spreadsheet->getActiveSheet()->SetCellValue('B'.$rowCount, $value->nama_kec); 
+		    $spreadsheet->getActiveSheet()->SetCellValue('C'.$rowCount, $value->nama_desa); 
+		    $spreadsheet->getActiveSheet()->SetCellValue('D'.$rowCount, $value->dpt_l); 
+		    $spreadsheet->getActiveSheet()->SetCellValue('E'.$rowCount, $value->dpt_p); 
+		    $spreadsheet->getActiveSheet()->SetCellValue('F'.$rowCount, $value->dpt_l+$value->dpt_p); 
+		    $spreadsheet->getActiveSheet()->getStyle('F')->getNumberFormat()->setFormatCode('#,##0.00');
+		    $spreadsheet->getActiveSheet()->SetCellValue('G'.$rowCount, $value->suratsuara); 
+		    $spreadsheet->getActiveSheet()->getStyle('G')->getNumberFormat()->setFormatCode('[Blue][>=1000]#,##0;[Red][<0]#,##0;#,##0');
+		    $spreadsheet->getActiveSheet()->SetCellValue('H'.$rowCount, $value->ketua); 
 		    $rowCount++; 
 		} 
 
-		$objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel); 
-		$objWriter->save('./assets/excel/DtPokok'.$this->session->userdata('id_kec').'.xlsx'); 
-
-		$this->load->helper('download');
-		force_download('./assets/excel/DtPokok'.$this->session->userdata('id_kec').'.xlsx', NULL);
+		$writer = new Xlsx($spreadsheet);
+		if ($this->session->userdata('id_role') == '3') {
+			$filename = 'data_pokok_'.$this->session->userdata('thn_data').'_'.$this->session->userdata('id_kec').'.xlsx';
+		} else {
+			$filename = 'data_pokok_'.$this->session->userdata('thn_data').'_all.xlsx';
+		}
+		
+		//header('Content-Type: application/vnd.ms-excel');
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition: attachment;filename="'. $filename ); 
+		header('Cache-Control: max-age=0');
+		$writer->save('php://output');
 	}
 
 	function xadd_ajax_des($id_kec){
@@ -213,12 +220,16 @@ class Penyelenggara extends AUTH_Controller {
 	}
 
 	function add_ajax_des($id_kec){
+	    //$query = $this->db->get_where('tbl_wdesa',array('kecamatan_id'=>$id_kec));
+	    //$query = $this->db->get_where('tbl_wdesa',array('kecamatan_id'=>$id_kec));
 
 	    $this->db->select('*');
 		$this->db->from('tbl_wdesa');
 		$this->db->like('kecamatan_id',$id_kec);
 		$query=$this->db->get();
 
+	    //$data = "<option value=''> - Pilih Desa - </option>";
+	    
 	    foreach ($query->result() as $value) {
 	        $data .= "<option value='".$value->id_desa."'>".$value->nama_desa."</option>";
 	    }

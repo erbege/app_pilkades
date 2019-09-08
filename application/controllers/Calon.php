@@ -1,6 +1,9 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 class Calon extends AUTH_Controller {
 	public function __construct() {
 		parent::__construct();
@@ -161,8 +164,8 @@ class Calon extends AUTH_Controller {
 			if(file_exists('upload/'.$this->input->post('remove_photo')) && $this->input->post('remove_photo'))
 				unlink('upload/'.$this->input->post('remove_photo'));
 			
-			if(file_exists('upload/large/'.$this->input->post('remove_photo')) && $this->input->post('remove_photo'))
-				unlink('upload/large/'.$this->input->post('remove_photo'));
+			//if(file_exists('upload/large/'.$this->input->post('remove_photo')) && $this->input->post('remove_photo'))
+			//	unlink('upload/large/'.$this->input->post('remove_photo'));
 			if(file_exists('upload/medium/'.$this->input->post('remove_photo')) && $this->input->post('remove_photo'))
 				unlink('upload/medium/'.$this->input->post('remove_photo'));
 			if(file_exists('upload/small/'.$this->input->post('remove_photo')) && $this->input->post('remove_photo'))
@@ -179,8 +182,8 @@ class Calon extends AUTH_Controller {
 			if(file_exists('upload/'.$calon->photo) && $calon->photo)
 				unlink('upload/'.$calon->photo);
 			
-			if(file_exists('upload/large/'.$calon->photo) && $calon->photo)
-				unlink('upload/large/'.$calon->photo);
+			//if(file_exists('upload/large/'.$calon->photo) && $calon->photo)
+			//	unlink('upload/large/'.$calon->photo);
 			if(file_exists('upload/medium/'.$calon->photo) && $calon->photo)
 				unlink('upload/medium/'.$calon->photo);
 			if(file_exists('upload/small/'.$calon->photo) && $calon->photo)
@@ -200,8 +203,8 @@ class Calon extends AUTH_Controller {
 		if(file_exists('upload/'.$calon->photo) && $calon->photo)
 			unlink('upload/'.$calon->photo);
 		
-		if(file_exists('upload/large/'.$calon->photo) && $calon->photo)
-			unlink('upload/large/'.$calon->photo);
+		//if(file_exists('upload/large/'.$calon->photo) && $calon->photo)
+		//	unlink('upload/large/'.$calon->photo);
 		if(file_exists('upload/medium/'.$calon->photo) && $calon->photo)
 			unlink('upload/medium/'.$calon->photo);
 		if(file_exists('upload/small/'.$calon->photo) && $calon->photo)
@@ -253,14 +256,14 @@ class Calon extends AUTH_Controller {
         // Image resizing config
         $config = array(
             // Image Large
-            array(
-                'image_library' => 'GD2',
-                'source_image'  => 'upload/'.$file_name,
-                'maintain_ratio'=> FALSE,
-                'width'         => 600,
-                'height'        => 800,
-                'new_image'     => 'upload/large/'.$file_name
-                ),
+            //array(
+            //    'image_library' => 'GD2',
+            //    'source_image'  => 'upload/'.$file_name,
+            //    'maintain_ratio'=> FALSE,
+            //    'width'         => 600,
+            //    'height'        => 800,
+            //    'new_image'     => 'upload/large/'.$file_name
+            //    ),
             // image Medium
             array(
                 'image_library' => 'GD2',
@@ -342,48 +345,53 @@ class Calon extends AUTH_Controller {
 
 	public function export() {
 		error_reporting(E_ALL);
-    	
-		include_once './assets/phpexcel/Classes/PHPExcel.php';
-		$objPHPExcel = new PHPExcel();
 
 		$data = $this->calon->select_by_kec();
-
-		$objPHPExcel = new PHPExcel(); 
-		$objPHPExcel->setActiveSheetIndex(0); 
+    	
+		$spreadsheet  = new Spreadsheet();
+		$spreadsheet->setActiveSheetIndex(0); 
 		$rowCount = 1; 
 
-		$objPHPExcel->getActiveSheet()->SetCellValue('A'.$rowCount, "NO");
-		$objPHPExcel->getActiveSheet()->SetCellValue('B'.$rowCount, "KECAMATAN");
-		$objPHPExcel->getActiveSheet()->SetCellValue('C'.$rowCount, "DESA");
-		$objPHPExcel->getActiveSheet()->SetCellValue('E'.$rowCount, "NO URUT");
-		$objPHPExcel->getActiveSheet()->SetCellValue('D'.$rowCount, "NAMA");
-		$objPHPExcel->getActiveSheet()->SetCellValue('F'.$rowCount, "TEMPAT/TGL LAHIR");
-		$objPHPExcel->getActiveSheet()->SetCellValue('G'.$rowCount, "L/P");
-		$objPHPExcel->getActiveSheet()->SetCellValue('H'.$rowCount, "AGAMA");
-		$objPHPExcel->getActiveSheet()->SetCellValue('I'.$rowCount, "PENDIDIKAN TERAKHIR");
-		$objPHPExcel->getActiveSheet()->SetCellValue('J'.$rowCount, "PEKERJAAN");
+		$spreadsheet->getActiveSheet()->SetCellValue('A'.$rowCount, "NO");
+		$spreadsheet->getActiveSheet()->SetCellValue('B'.$rowCount, "KECAMATAN");
+		$spreadsheet->getActiveSheet()->SetCellValue('C'.$rowCount, "DESA");
+		$spreadsheet->getActiveSheet()->SetCellValue('E'.$rowCount, "NO URUT");
+		$spreadsheet->getActiveSheet()->SetCellValue('D'.$rowCount, "NAMA");
+		$spreadsheet->getActiveSheet()->SetCellValue('F'.$rowCount, "TEMPAT/TGL LAHIR");
+		$spreadsheet->getActiveSheet()->SetCellValue('G'.$rowCount, "L/P");
+		$spreadsheet->getActiveSheet()->SetCellValue('H'.$rowCount, "AGAMA");
+		$spreadsheet->getActiveSheet()->SetCellValue('I'.$rowCount, "PENDIDIKAN TERAKHIR");
+		$spreadsheet->getActiveSheet()->SetCellValue('J'.$rowCount, "PEKERJAAN");
 
 		$rowCount++;
 
 		foreach($data as $value){
-		    $objPHPExcel->getActiveSheet()->SetCellValue('A'.$rowCount, $rowCount-1); 
-		    $objPHPExcel->getActiveSheet()->SetCellValue('B'.$rowCount, $value->nama_kec); 
-		    $objPHPExcel->getActiveSheet()->SetCellValue('C'.$rowCount, $value->nama_desa); 
-		    $objPHPExcel->getActiveSheet()->SetCellValue('E'.$rowCount, $value->nourut); 
-		    $objPHPExcel->getActiveSheet()->SetCellValue('D'.$rowCount, $value->nama); 
-		    $objPHPExcel->getActiveSheet()->SetCellValue('F'.$rowCount, $value->tmp_lahir); 
-		    $objPHPExcel->getActiveSheet()->SetCellValue('G'.$rowCount, $value->kelamin); 
-		    $objPHPExcel->getActiveSheet()->SetCellValue('H'.$rowCount, $value->agama); 
-		    $objPHPExcel->getActiveSheet()->SetCellValue('I'.$rowCount, $value->nama_pendidikan); 
-		    $objPHPExcel->getActiveSheet()->SetCellValue('J'.$rowCount, $value->nama_pekerjaan); 
+		    $spreadsheet->getActiveSheet()->SetCellValue('A'.$rowCount, $rowCount-1); 
+		    $spreadsheet->getActiveSheet()->SetCellValue('B'.$rowCount, $value->nama_kec); 
+		    $spreadsheet->getActiveSheet()->SetCellValue('C'.$rowCount, $value->nama_desa); 
+		    $spreadsheet->getActiveSheet()->SetCellValue('E'.$rowCount, $value->nourut); 
+		    $spreadsheet->getActiveSheet()->SetCellValue('D'.$rowCount, $value->nama); 
+		    $spreadsheet->getActiveSheet()->SetCellValue('F'.$rowCount, $value->tmp_lahir); 
+		    $spreadsheet->getActiveSheet()->SetCellValue('G'.$rowCount, $value->kelamin); 
+		    $spreadsheet->getActiveSheet()->SetCellValue('H'.$rowCount, $value->agama); 
+		    $spreadsheet->getActiveSheet()->SetCellValue('I'.$rowCount, $value->nama_pendidikan); 
+		    $spreadsheet->getActiveSheet()->SetCellValue('J'.$rowCount, $value->nama_pekerjaan); 
 		    $rowCount++; 
 		} 
 
-		$objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel); 
-		$objWriter->save('./assets/excel/DataCalon'.$this->session->userdata('id_kec').'.xlsx'); 
+		$writer = new Xlsx($spreadsheet);
+		if ($this->session->userdata('id_role') == '3') {
+			$filename = 'data_calon_'.$this->session->userdata('thn_data').'_'.$this->session->userdata('id_kec').'.xlsx';
+		} else {
+			$filename = 'data_calon_'.$this->session->userdata('thn_data').'_all.xlsx';
+		}
+		
+		//header('Content-Type: application/vnd.ms-excel');
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition: attachment;filename="'. $filename ); 
+		header('Cache-Control: max-age=0');
+		$writer->save('php://output');
 
-		$this->load->helper('download');
-		force_download('./assets/excel/DataCalon'.$this->session->userdata('id_kec').'.xlsx', NULL);
 	}
 
 	function add_ajax_desa($id_kec){
