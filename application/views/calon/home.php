@@ -107,7 +107,7 @@
                 <h3 class="modal-title">Person Form</h3>
             </div>
             <div class="modal-body form">
-                <form action="#" id="form" class="form-horizontal">
+                <form action="#" id="form" class="form-horizontal" enctype="multipart/form-data">
                     <input type="hidden" value="" name="id"/> 
                     <input type="hidden" value="<?php echo $this->session->userdata('thn_data'); ?>" name="thn_pemilihan"/> 
 
@@ -261,9 +261,9 @@
                         <div class="form-group">
                             <label class="control-label col-md-3" id="label-photo">Upload Photo</label> 
                             <div class="col-md-9">
-                                <input name="photo" type="file" accept="image/png, image/jpeg, image/gif">
+                                <input name="photo" type="file" accept="image/png, image/gif, image/jpg, image/bmp">
                                 <span class="help-block"></span>
-                                <small><em>Berkas photo harus berekstensi *.JPG/*.PNG/*.GIF dengan ukuran maksimal 2 MB (2048 KByte)</em></small>
+                                <small><em>Berkas photo harus berekstensi *.JPG/*.JPEG/*.PNG/*.GIF/*.BMP dengan ukuran maksimal 2 MB (2048 KByte)</em></small>
                             </div>
                                 
                         </div>

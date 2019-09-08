@@ -9,12 +9,13 @@ class Calon extends AUTH_Controller {
 		$this->load->model('M_pendidikan','pendidikan');
 		$this->load->model('M_penyelenggara','desapemilihan');
 		$this->load->model('M_desa','desa');
+		
+		$this->load->helper('url', 'form');
 	}
 
 	public function index() {
 
-		$this->load->helper('url');
-		$this->load->helper('form');
+		//$this->load->helper('url', 'form');
 
 		$kecamatans = $this->desapemilihan->get_list_kec();
 
@@ -159,6 +160,13 @@ class Calon extends AUTH_Controller {
 		{
 			if(file_exists('upload/'.$this->input->post('remove_photo')) && $this->input->post('remove_photo'))
 				unlink('upload/'.$this->input->post('remove_photo'));
+			
+			if(file_exists('upload/large/'.$this->input->post('remove_photo')) && $this->input->post('remove_photo'))
+				unlink('upload/large/'.$this->input->post('remove_photo'));
+			if(file_exists('upload/medium/'.$this->input->post('remove_photo')) && $this->input->post('remove_photo'))
+				unlink('upload/medium/'.$this->input->post('remove_photo'));
+			if(file_exists('upload/small/'.$this->input->post('remove_photo')) && $this->input->post('remove_photo'))
+				unlink('upload/small/'.$this->input->post('remove_photo'));
 			$data['photo'] = '';
 		}
 
@@ -170,7 +178,14 @@ class Calon extends AUTH_Controller {
 			$calon = $this->calon->get_by_id($this->input->post('id'));
 			if(file_exists('upload/'.$calon->photo) && $calon->photo)
 				unlink('upload/'.$calon->photo);
-
+			
+			if(file_exists('upload/large/'.$calon->photo) && $calon->photo)
+				unlink('upload/large/'.$calon->photo);
+			if(file_exists('upload/medium/'.$calon->photo) && $calon->photo)
+				unlink('upload/medium/'.$calon->photo);
+			if(file_exists('upload/small/'.$calon->photo) && $calon->photo)
+				unlink('upload/small/'.$calon->photo);
+			
 			$data['photo'] = $upload;
 		}
 
@@ -185,28 +200,35 @@ class Calon extends AUTH_Controller {
 		if(file_exists('upload/'.$calon->photo) && $calon->photo)
 			unlink('upload/'.$calon->photo);
 		
+		if(file_exists('upload/large/'.$calon->photo) && $calon->photo)
+			unlink('upload/large/'.$calon->photo);
+		if(file_exists('upload/medium/'.$calon->photo) && $calon->photo)
+			unlink('upload/medium/'.$calon->photo);
+		if(file_exists('upload/small/'.$calon->photo) && $calon->photo)
+			unlink('upload/small/'.$calon->photo);
+		
 		$this->calon->delete_by_id($id);
 		echo json_encode(array("status" => TRUE));
 	}
 
 	private function _do_upload()
 	{
-		$nmft1 = $this->input->post('nama');
+		$nmft1 = preg_replace("/[^a-zA-Z]/", "_", $this->input->post('nama'));
 		$nmft2 = $this->session->userdata('thn_data');
 		$nmft3 = $this->input->post('kddesa');
 		$nmft4 = $this->input->post('nourut');
-		$nmft5 = round(microtime(true) * 1000); //just milisecond timestamp fot unique name
-		//$nmft1 = 'photo';
-		
+		//$nmft5 = round(microtime(true) * 1000); //just milisecond timestamp fot unique name
 
 		$config['upload_path']          = 'upload/';
-        $config['allowed_types']        = 'gif|jpg|png|jpeg|bmp';
+        $config['allowed_types']        = 'gif|jpg|png|bmp';
         $config['max_size']             = 2048; //set max size allowed in Kilobyte
-        //$config['encrypt_name'] = TRUE; //enkripsi nama file
+		$config['overwrite']			= true;
+        //$config['encrypt_name'] 		  = true; //enkripsi nama file
         //$config['max_width']            = 1000; // set max width image allowed
         //$config['max_height']           = 1000; // set max height allowed
         //$config['file_name']            = round(microtime(true) * 1000); //just milisecond timestamp fot unique name
-        $config['file_name']            = strtoupper($nmft1).'-'.$nmft2.''.$nmft3.''.$nmft4.'_'.$nmft5;
+        //$config['file_name']            = strtoupper($nmft1).'-'.$nmft2.'_'.$nmft3.'_'.$nmft4.'_'.$nmft5;
+		$config['file_name']            = strtoupper($nmft1).'-'.$nmft2.'_'.$nmft3.'_'.$nmft4;
 
         $this->load->library('upload', $config);
 
