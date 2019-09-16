@@ -21,9 +21,6 @@ Fitur :
 - Pie/Bar Chart
 - Time Schedule (tahapan pengolahan data terjadwal)
   
-Demo Account:
-1. username : admin / password : admin123
-2. username : operator / password : operator123
 
 Buy Me A Coffee
 IG: @kang.bege
