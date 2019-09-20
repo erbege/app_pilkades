@@ -2,13 +2,14 @@
 
 Dibuat menggunakan:
 - Codeigniter
-- Bootstrap
+- Bootstrap 3.7
 - AdminLTE2
 - PHPExcel/PHPOffice
 - mPDF
 - jQuery/AJAX
 - ChartJS
 - DataTable
+- Sweet Alert
 - dll
 
 
@@ -22,5 +23,6 @@ Fitur :
 - Time Schedule (tahapan pengolahan data terjadwal)
   
 
-Buy Me A Coffee
+Buy Me A Coffee :)
 IG: @kang.bege
+WA: +6282240998474
