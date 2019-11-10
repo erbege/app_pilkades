@@ -2,13 +2,14 @@
 
 Dibuat menggunakan:
 - Codeigniter
-- Bootstrap
+- Bootstrap 3.7
 - AdminLTE2
 - PHPExcel/PHPOffice
 - mPDF
 - jQuery/AJAX
 - ChartJS
 - DataTable
+- Sweet Alert
 - dll
 
 
@@ -21,6 +22,7 @@ Fitur :
 - Pie/Bar Chart
 - Time Schedule (tahapan pengolahan data terjadwal)
   
-Demo Account:
-1. username : admin / password : admin123
-2. username : operator / password : operator123
+
+Buy Me A Coffee :)
+IG: @kang.bege
+WA: +6282240998474
