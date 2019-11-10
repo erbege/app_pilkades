@@ -18,7 +18,7 @@ class Calon extends AUTH_Controller {
 
 	public function index() {
 
-		//$this->load->helper('url', 'form');
+		$this->load->helper('url', 'form');
 
 		$kecamatans = $this->desapemilihan->get_list_kec();
 
@@ -27,7 +27,7 @@ class Calon extends AUTH_Controller {
 			$opt[$kec] = $kec;
 		}
 
-		$data['form_kec'] 		= form_dropdown('',$opt,'','id="nama_kec" class="form-control"');
+		//$data['form_kec'] 		= form_dropdown('',$opt,'','id="nama_kec" class="form-control"');
 
 		$data['kecamatan'] 		= $this->desapemilihan->getKec();
 		$data['dataDesanya']   	= $this->desa->select_by_kec();
@@ -52,6 +52,9 @@ class Calon extends AUTH_Controller {
 		foreach ($list as $calon) {
 			$no++;
 			$row = array();
+			$row[] = $no;
+			$row[] = $calon->nama_kec;
+			$row[] = $calon->nama_desa;
 			$row[] = "<div class='numberCircleSmall'>".$calon->nourut."</div>";
 			$row[] = $calon->nama;
 			$row[] = $calon->tmp_lahir.',<br /> '.$calon->tgl_lahir;
@@ -59,9 +62,8 @@ class Calon extends AUTH_Controller {
 			$row[] = $calon->kelamin;
 			$row[] = $calon->nama_pendidikan;
 			$row[] = $calon->nama_pekerjaan;
-			$row[] = $calon->nama_desa.',<br /> '.$calon->nama_kec;
 			if($calon->photo)
-				$row[] = '<a href="'.base_url('upload/'.$calon->photo).'" target="_blank"><img src="'.base_url('upload/small/'.$calon->photo).'" class="profile-user-img img-responsive" /></a>';
+				$row[] = '<a href="'.base_url('upload/large/'.$calon->photo).'" target="_blank"><img src="'.base_url('upload/small/'.$calon->photo).'" class="profile-user-img img-responsive" /></a>';
 			else
 				$row[] = '(No photo)';
 
@@ -164,8 +166,8 @@ class Calon extends AUTH_Controller {
 			if(file_exists('upload/'.$this->input->post('remove_photo')) && $this->input->post('remove_photo'))
 				unlink('upload/'.$this->input->post('remove_photo'));
 			
-			//if(file_exists('upload/large/'.$this->input->post('remove_photo')) && $this->input->post('remove_photo'))
-			//	unlink('upload/large/'.$this->input->post('remove_photo'));
+			if(file_exists('upload/large/'.$this->input->post('remove_photo')) && $this->input->post('remove_photo'))
+				unlink('upload/large/'.$this->input->post('remove_photo'));
 			if(file_exists('upload/medium/'.$this->input->post('remove_photo')) && $this->input->post('remove_photo'))
 				unlink('upload/medium/'.$this->input->post('remove_photo'));
 			if(file_exists('upload/small/'.$this->input->post('remove_photo')) && $this->input->post('remove_photo'))
@@ -182,8 +184,8 @@ class Calon extends AUTH_Controller {
 			if(file_exists('upload/'.$calon->photo) && $calon->photo)
 				unlink('upload/'.$calon->photo);
 			
-			//if(file_exists('upload/large/'.$calon->photo) && $calon->photo)
-			//	unlink('upload/large/'.$calon->photo);
+			if(file_exists('upload/large/'.$calon->photo) && $calon->photo)
+				unlink('upload/large/'.$calon->photo);
 			if(file_exists('upload/medium/'.$calon->photo) && $calon->photo)
 				unlink('upload/medium/'.$calon->photo);
 			if(file_exists('upload/small/'.$calon->photo) && $calon->photo)
@@ -203,8 +205,8 @@ class Calon extends AUTH_Controller {
 		if(file_exists('upload/'.$calon->photo) && $calon->photo)
 			unlink('upload/'.$calon->photo);
 		
-		//if(file_exists('upload/large/'.$calon->photo) && $calon->photo)
-		//	unlink('upload/large/'.$calon->photo);
+		if(file_exists('upload/large/'.$calon->photo) && $calon->photo)
+			unlink('upload/large/'.$calon->photo);
 		if(file_exists('upload/medium/'.$calon->photo) && $calon->photo)
 			unlink('upload/medium/'.$calon->photo);
 		if(file_exists('upload/small/'.$calon->photo) && $calon->photo)
@@ -256,17 +258,17 @@ class Calon extends AUTH_Controller {
         // Image resizing config
         $config = array(
             // Image Large
-            //array(
-            //    'image_library' => 'GD2',
-            //    'source_image'  => 'upload/'.$file_name,
-            //    'maintain_ratio'=> FALSE,
-            //    'width'         => 600,
-            //    'height'        => 800,
-            //    'new_image'     => 'upload/large/'.$file_name
-            //    ),
+            array(
+               'image_library' => 'gd2',
+               'source_image'  => 'upload/'.$file_name,
+               'maintain_ratio'=> FALSE,
+               //'width'         => 600,
+               //'height'        => 800,
+               'new_image'     => 'upload/large/'.$file_name
+               ),
             // image Medium
             array(
-                'image_library' => 'GD2',
+                'image_library' => 'gd2',
                 'source_image'  => 'upload/'.$file_name,
                 'maintain_ratio'=> FALSE,
                 'width'         => 300,
@@ -275,7 +277,7 @@ class Calon extends AUTH_Controller {
                 ),
             // Image Small
             array(
-                'image_library' => 'GD2',
+                'image_library' => 'gd2',
                 'source_image'  => 'upload/'.$file_name,
                 'maintain_ratio'=> FALSE,
                 'width'         => 90,
@@ -345,6 +347,52 @@ class Calon extends AUTH_Controller {
 
 	public function export() {
 		error_reporting(E_ALL);
+    	
+		include_once './assets/phpexcel/Classes/PHPExcel.php';
+		$objPHPExcel = new PHPExcel();
+
+		$data = $this->calon->select_by_kec();
+
+		$objPHPExcel = new PHPExcel(); 
+		$objPHPExcel->setActiveSheetIndex(0); 
+		$rowCount = 1; 
+
+		$objPHPExcel->getActiveSheet()->SetCellValue('A'.$rowCount, "NO");
+		$objPHPExcel->getActiveSheet()->SetCellValue('B'.$rowCount, "KECAMATAN");
+		$objPHPExcel->getActiveSheet()->SetCellValue('C'.$rowCount, "DESA");
+		$objPHPExcel->getActiveSheet()->SetCellValue('E'.$rowCount, "NO URUT");
+		$objPHPExcel->getActiveSheet()->SetCellValue('D'.$rowCount, "NAMA");
+		$objPHPExcel->getActiveSheet()->SetCellValue('F'.$rowCount, "TEMPAT/TGL LAHIR");
+		$objPHPExcel->getActiveSheet()->SetCellValue('G'.$rowCount, "L/P");
+		$objPHPExcel->getActiveSheet()->SetCellValue('H'.$rowCount, "AGAMA");
+		$objPHPExcel->getActiveSheet()->SetCellValue('I'.$rowCount, "PENDIDIKAN TERAKHIR");
+		$objPHPExcel->getActiveSheet()->SetCellValue('J'.$rowCount, "PEKERJAAN");
+
+		$rowCount++;
+
+		foreach($data as $value){
+		    $objPHPExcel->getActiveSheet()->SetCellValue('A'.$rowCount, $rowCount-1); 
+		    $objPHPExcel->getActiveSheet()->SetCellValue('B'.$rowCount, $value->nama_kec); 
+		    $objPHPExcel->getActiveSheet()->SetCellValue('C'.$rowCount, $value->nama_desa); 
+		    $objPHPExcel->getActiveSheet()->SetCellValue('E'.$rowCount, $value->nourut); 
+		    $objPHPExcel->getActiveSheet()->SetCellValue('D'.$rowCount, $value->nama); 
+		    $objPHPExcel->getActiveSheet()->SetCellValue('F'.$rowCount, $value->tmp_lahir); 
+		    $objPHPExcel->getActiveSheet()->SetCellValue('G'.$rowCount, $value->kelamin); 
+		    $objPHPExcel->getActiveSheet()->SetCellValue('H'.$rowCount, $value->agama); 
+		    $objPHPExcel->getActiveSheet()->SetCellValue('I'.$rowCount, $value->nama_pendidikan); 
+		    $objPHPExcel->getActiveSheet()->SetCellValue('J'.$rowCount, $value->nama_pekerjaan); 
+		    $rowCount++; 
+		} 
+
+		$objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel); 
+		$objWriter->save('./assets/excel/DataCalon'.$this->session->userdata('id_kec').'.xlsx'); 
+
+		$this->load->helper('download');
+		force_download('./assets/excel/DataCalon'.$this->session->userdata('id_kec').'.xlsx', NULL);
+	}
+
+	public function exportPHPOffice() {
+		error_reporting(E_ALL);
 
 		$data = $this->calon->select_by_kec();
     	
@@ -396,7 +444,7 @@ class Calon extends AUTH_Controller {
 
 	function add_ajax_desa($id_kec){
 	    $query = $this->db->get_where('tbl_wdesa',array('kecamatan_id'=>$id_kec));
-	    //$data = "<option value=''> - Pilih Desa - </option>";
+	    $data = "<option value=''>Semua</option>";
 	    
 	    foreach ($query->result() as $value) {
 	        $data .= "<option value='".$value->id_desa."'>".$value->nama_desa."</option>";

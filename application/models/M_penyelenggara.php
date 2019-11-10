@@ -261,6 +261,18 @@ class M_penyelenggara extends CI_Model {
 
 		return $data->row();
 	}
+
+	public function select_jml_kec() {
+		if ($this->session->userdata('id_role') == '3') {
+			$sql = "SELECT COUNT(DISTINCT(kdkec)) AS jmlkec FROM tbl_desa_penyelenggara WHERE thn_pemilihan = '".$this->session->userdata('thn_data')."' AND kdkec = '".$this->session->userdata('id_kec')."'";
+		} else {
+			$sql = "SELECT COUNT(DISTINCT(kdkec)) AS jmlkec FROM tbl_desa_penyelenggara WHERE thn_pemilihan = '".$this->session->userdata('thn_data')."'";
+		}
+
+		$data = $this->db->query($sql);
+
+		return $data->row();
+	}
 }
 
 /* End of file M_penyelenggara.php */

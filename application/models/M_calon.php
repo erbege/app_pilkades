@@ -4,8 +4,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class M_calon extends CI_Model {
 
 	var $table = 'tbl_calon';
-	var $column_order = array('tbl_calon.nourut','tbl_calon.nama','tbl_calon.tgl_lahir','tbl_calon.agama','tbl_calon.kelamin','tbl_pendidikan.nama_pendidikan','tbl_pekerjaan.nama_pekerjaan',null,null); //set column field database for datatable orderable
-	var $column_search = array('tbl_calon.nama','tbl_pendidikan.nama_pendidikan','tbl_wdesa.nama_desa'); 
+	var $column_order = array('tbl_wkecamatan.nama_kec','tbl_wdesa.nama_desa','tbl_calon.nourut','tbl_calon.nama','tbl_calon.tgl_lahir','tbl_calon.agama','tbl_calon.kelamin','tbl_pendidikan.nama_pendidikan','tbl_pekerjaan.nama_pekerjaan','tbl_calon.photo',null); //set column field database for datatable orderable
+	var $column_search = array('tbl_wkecamatan.nama_kec','tbl_wdesa.nama_desa','tbl_calon.nama','tbl_calon.kelamin','tbl_pendidikan.nama_pendidikan','tbl_pekerjaan.nama_pekerjaan','tbl_calon.agama'); 
 	var $order = array('tbl_calon.id' => 'desc'); // default order 
 
 	public function __construct()
@@ -30,15 +30,57 @@ class M_calon extends CI_Model {
 
 
 		//add custom filter here
-		if($this->input->post('nama_kec'))
-		{
-			$this->db->like('tbl_wkecamatan.nama_kec', $this->input->post('nama_kec'));
-		}
-		if($this->input->post('nama_desa'))
-		{
-			$this->db->like('tbl_wdesa.nama_desa', $this->input->post('nama_desa'));
+		// if($this->input->post('nama_kec'))
+		// {
+		// 	$this->db->like('tbl_wkecamatan.nama_kec', $this->input->post('nama_kec'));
+		// }
+
+		// if($this->input->post('nama_desa'))
+		// {
+		// 	$this->db->like('tbl_wdesa.nama_desa', $this->input->post('nama_desa'));
+		// }
+
+		if (($this->session->userdata('id_role') == '1') || ($this->session->userdata('id_role') == '2')){
+
+			if($this->input->post('kdkec'))
+			{
+				$this->db->like('tbl_calon.kdkec', $this->input->post('kdkec'));
+			}
+
+			if($this->input->post('kddesa'))
+			{
+				$this->db->like('tbl_calon.kddesa', $this->input->post('kddesa'));
+			}
+
+			if($this->input->post('nama_pendidikan'))
+			{
+				$this->db->where('tbl_pendidikan.nama_pendidikan', $this->input->post('nama_pendidikan'));
+			}
+
+			if($this->input->post('nama_pekerjaan'))
+			{
+				$this->db->like('tbl_pekerjaan.nama_pekerjaan', $this->input->post('nama_pekerjaan'));
+			}
+
+			if($this->input->post('kelamin'))
+			{
+				$this->db->like('tbl_calon.kelamin', $this->input->post('kelamin'));
+			}
+
+			if($this->input->post('agama'))
+			{
+				$this->db->like('tbl_calon.agama', $this->input->post('agama'));
+			}
+
+			if($this->input->post('photo') == 'Y')
+			{
+				// $where = 'tbl_calon.photo is not null';
+				// $this->db->where($where);
+				$this->db->where('tbl_calon.photo !=', null);
+			}
 		}
 		
+
 		$i = 0;
 	
 		foreach ($this->column_search as $item) // loop column 
@@ -153,7 +195,8 @@ class M_calon extends CI_Model {
 		if ($this->session->userdata('id_role') == '3') {
 			$this->db->where('tbl_calon.kdkec',$this->session->userdata('id_kec'));
 		}
-		
+		//$this->db->order_by('tbl_calon.kdkec,tbl_calon.kddesa,tbl_calon.nourut', 'ASC');
+		$this->db->order_by('tbl_wkecamatan.nama_kec,tbl_wdesa.nama_desa,tbl_calon.nourut', 'ASC');
 		$query = $this->db->get();
 
 		return $query->result();
@@ -203,6 +246,44 @@ class M_calon extends CI_Model {
 		$this->db->where('id', $id);
 		$this->db->update($this->table, $data);
 		return $this->db->affected_rows();
+	}
+
+	public function select_sebaran()
+	{
+		$this->db->select('tbl_wkecamatan.nama_kec,tbl_wdesa.nama_desa, COUNT(tbl_calon.kddesa) as jml_calon');
+		$this->db->from('tbl_calon');
+		$this->db->join('tbl_wkecamatan','tbl_wkecamatan.id_kec=tbl_calon.kdkec', 'left');
+		$this->db->join('tbl_wdesa','tbl_wdesa.id_desa=tbl_calon.kddesa', 'left');
+		$this->db->where('tbl_calon.thn_pemilihan',$this->session->userdata('thn_data'));
+		$this->db->group_by('tbl_calon.kdkec,tbl_calon.kddesa');
+		$this->db->order_by('jml_calon', 'ASC');
+		$query = $this->db->get();
+
+		return $query->result();
+	}
+
+	public function select_jml_desa() {
+		if ($this->session->userdata('id_role') == '3') {
+			$sql = "SELECT COUNT(DISTINCT(kddesa)) AS jmldesa FROM tbl_calon WHERE thn_pemilihan = '".$this->session->userdata('thn_data')."' AND kdkec = '".$this->session->userdata('id_kec')."'";
+		} else {
+			$sql = "SELECT COUNT(DISTINCT(kddesa)) AS jmldesa FROM tbl_calon WHERE thn_pemilihan = '".$this->session->userdata('thn_data')."'";
+		}
+
+		$data = $this->db->query($sql);
+
+		return $data->row();
+	}
+
+	public function select_jml_kec() {
+		if ($this->session->userdata('id_role') == '3') {
+			$sql = "SELECT COUNT(DISTINCT(kdkec)) AS jmlkec FROM tbl_calon WHERE thn_pemilihan = '".$this->session->userdata('thn_data')."' AND kdkec = '".$this->session->userdata('id_kec')."'";
+		} else {
+			$sql = "SELECT COUNT(DISTINCT(kdkec)) AS jmlkec FROM tbl_calon WHERE thn_pemilihan = '".$this->session->userdata('thn_data')."'";
+		}
+
+		$data = $this->db->query($sql);
+
+		return $data->row();
 	}
 
 }

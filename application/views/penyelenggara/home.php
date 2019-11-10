@@ -172,7 +172,7 @@
         },
 			"processing": true, //Feature control the processing indicator.
 			"serverSide": true, //Feature control DataTables' server-side processing mode.
-			"order": [], //Initial no order.
+			//"order": [], //Initial no order.
 			// Load data for the table's content from an Ajax source
 			"ajax": {
 			"url": "<?php echo site_url('penyelenggara/ajax_list')?>",
@@ -182,18 +182,65 @@
 				data.nama_desa = $('#nama_desa').val();
 			}
 			},
+			"paging": true,
+			"lengthChange": true,
+			"searching": true,
+			"ordering": true,
+			"info": true,
+			"autoWidth": true,
+			"language": {
+				lengthMenu: "Tampilkan _MENU_ Baris",
+				zeroRecords: "Maaf - Data Tidak Ditemukan",
+				info: "Menampilkan halaman _PAGE_ Dari _PAGES_",
+				infoEmpty: "Tidak Ada Data Tersedia",
+				infoFiltered: "(disaring dari total rekaman _MAX_)",
+				paginate: {
+					first:"Awal",
+					last:"Akhir",
+					next:"Lanjut",
+					previous:"Sebelum"
+					},
+				search:"Pencarian: ",
+			},
+			responsive: true,
 			//Set column definition initialisation properties.
 			"columnDefs": [
 					{
 					"targets": [ 0 ], //first column / numbering column
 					"orderable": false, //set not orderable
 					},
+					{ 
+						targets:[ -1 ],
+						orderable: false,
+						responsivePriority: 2, 
+						className: 'all'
+					},
+					{
+						targets:[ 1 ], 
+						visible: false, 
+						className: 'never'
+					}
 				],
 			aLengthMenu: [
 		        [10, 25, 50, 100, 200, -1],
 		        [10, 25, 50, 100, 200, "All"]
 		    ],
-		    iDisplayLength: 10
+		    iDisplayLength: 10,
+			"order": [[ 0, 'asc' ]],
+			drawCallback: function ( settings ) {
+				var api = this.api();
+				var rows = api.rows( {page:'current'} ).nodes();
+				var last=null;
+				api.column(1, {page:'current'} ).data().each( function ( group, i ) {
+				if ( last !== group ) {
+					$(rows).eq( i ).before(
+					'<tr class="bg-light-blue color-palette disabled"><td colspan="8"><b>'+group+'</b></td></tr>'
+					);
+
+				last = group;
+				}
+				} );
+			}
 		});
 
 		

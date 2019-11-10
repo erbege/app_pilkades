@@ -10,25 +10,106 @@
                 <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up" data-toggle="tooltip" title="Collapse"></i></span>
             </div>
             <div class="panel-body">
-                <form id="form-filter" class="form-horizontal">
+                <form id="form-filter" class="form-horizontal" method="POST">
+
                     <div class="form-group">
-                        <label for="nama_kec" class="col-sm-2 control-label">Kecamatan</label>
+                        <label class="control-label col-md-2">Kecamatan</label>
+                        <div class="col-md-4">
+
+                            <select id="kdkec" class="form-control select2" style="width: 100%" >
+                                <option value="">Semua</option>
+                                <?php
+                                foreach($kecamatan as $city){
+                                    echo "<option value='".$city['id_kec']."'>".$city['nama_kec']."</option>";
+                                }
+                                ?>
+                            </select>
+                            <span class="help-block"></span>
+
+                        </div>
+                        <label class="control-label col-md-2">Desa</label>
                         <div class="col-sm-4">
-                            <?php echo $form_kec; ?>
+                            <select id="kddesa" class="form-control select2" style="width: 100%">
+                                <option value="">Semua</option>
+                                <?php
+                                foreach($dataDesanya as $desaku){
+                                    echo "<option value='".$desaku->id_desa."'>".$desaku->nama_desa."</option>";
+                                }
+                                ?>
+                            </select>
+                            <span class="help-block"></span>
                         </div>
                     </div>
+                    
                     <div class="form-group">
-                        <label for="nama_desa" class="col-sm-2 control-label">Desa</label>
+                        <label class="control-label col-md-2">Pendidikan Terakhir</label>
+                        <div class="col-md-4">
+                            <select id="nama_pendidikan" class="form-control select2" style="width: 100%" >
+                               <option value="">Semua</option>
+                               <?php foreach($dataPendidikan as $dtDidik){
+                                    ?>
+                                    <option value="<?php echo $dtDidik->nama_pendidikan; ?>"><?php echo $dtDidik->nama_pendidikan; ?></option>
+                                <?php
+                                } ?>
+                            </select>
+                            <span class="help-block"></span>
+                        </div>
+                        <label class="control-label col-md-2">Pekerjaan</label>
                         <div class="col-sm-4">
-                            <input type="text" class="form-control" id="nama_desa">
+                            <select id="nama_pekerjaan" class="form-control select2" style="width: 100%">
+                                <option value="">Semua</option>
+                                <?php foreach($dataPekerjaan as $dpk){
+                                ?>
+                                <option value="<?php echo $dpk->nama_pekerjaan; ?>"><?php echo $dpk->nama_pekerjaan; ?></option>
+                                <?php
+                                } ?>
+                            </select>
+                            <span class="help-block"></span>
                         </div>
                     </div>
+                    
+                    <div class="form-group">
+                        <label class="control-label col-md-2">Jenis Kelamin</label>
+                        <div class="col-md-4">
+                            <select id="kelamin" class="form-control select2" style="width: 100%" >
+                                <option value="">Semua</option>
+                                <option value="L">Laki-laki</option>
+                                <option value="P">Perempuan</option>
+                            </select>
+                            <span class="help-block"></span>
+
+                        </div>
+                        <label class="control-label col-md-2">Agama</label>
+                        <div class="col-sm-4">
+                            <select id="agama" class="form-control select2" style="width: 100%">
+                                    <option value="">Semua</option>
+                                    <option value="Islam">Islam</option>
+                                    <option value="Kristen">Kristen</option>
+                                    <option value="Katholik">Katholik</option>
+                                    <option value="Hindu">Hindu</option>
+                                    <option value="Budha">Budha</option>
+                                    <option value="Konghucu">Konghucu</option>
+                                    <option value="Penghayat Kepercayaan">Penghayat Kepercayaan</option>
+                                    <option value="Lainnya">Lainnya</option>
+                                </select>
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-2"></label>
+                        <div class="col-md-4">
+                            <input type="checkbox" id="photo" class="form-control minimal" value="Y" />&nbsp;&nbsp;Tampilkan hanya data calon yang disertai foto
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+                    
                     <div class="form-group">
                         <label for="LastName" class="col-sm-2 control-label"></label>
                         <div class="col-sm-4">
                             <button type="button" id="btn-filter" class="btn btn-primary">Filter</button>
                             <button type="button" id="btn-reset" class="btn btn-default">Reset</button>
-                    </div>
+                        </div>
                     </div>
                 </form>
             </div> <!-- panel-body -->
@@ -71,6 +152,9 @@
             <table class="table table-hover table-condensed" id="table">
         		<thead>
                     <tr>
+						<th>No.</th>
+						<th>Kecamatan</th>
+						<th>Desa</th>
                         <th>No Urut</th>
             			<th>Nama</th>
             			<th>TTL</th>
@@ -78,7 +162,6 @@
                         <th>L/P</th>
             			<th>Pendidikan</th>
                         <th>Pekerjaan</th>
-                        <th>Desa</th>
                         <th style="width:100px;">Photo</th>
             			<th style="width:80px;">Aksi</th>
             		</tr>
@@ -88,7 +171,9 @@
                 <tfoot>
                     <tr>
                         <th></th>
-                        <th></th>
+						<th></th>
+						<th></th>
+						<th></th>
                         <th></th>
                         <th></th>
                         <th></th>
@@ -127,7 +212,7 @@
                         <div class="form-group">
                             <label class="control-label col-md-3">Kecamatan/Desa</label>
                             <div class="col-md-4">
-                                <select id="kdkec" name="kdkec" class="form-control" style="width: 100%" >
+                                <select id="kdkec" name="kdkec" class="form-control select2" style="width: 100%" >
                                    <option>-- Pilih Kecamatan --</option>
                                    <?php
                                    foreach($kecamatan as $city){
@@ -139,7 +224,7 @@
 
                             </div>
                             <div class="col-sm-5">
-                                <select id="kddesa" name="kddesa" class="form-control" style="width: 100%">
+                                <select id="kddesa" name="kddesa" class="form-control select2" style="width: 100%">
                                   <option>-- Pilih Desa --</option>
                                   <?php
                                    foreach($dataDesanya as $desaku){
@@ -159,6 +244,7 @@
                                     <option value="3">3</option>
                                     <option value="4">4</option>
                                     <option value="5">5</option>
+                                    <option value="-">-</option>
                                 </select>
                                 <span class="help-block"></span>
                             </div>
@@ -238,7 +324,7 @@
                         <div class="form-group">
                             <label class="control-label col-md-3">Pekerjaan</label>
                             <div class="col-md-6">
-                                <select name="id_pekerjaan" id="id_pekerjaan" class="form-control" style="width: 100%;">
+                                <select name="id_pekerjaan" id="id_pekerjaan" class="form-control select2" style="width: 100%;">
                                         <?php foreach($dataPekerjaan as $dpk){
                                         ?>
                                         <option value="<?php echo $dpk->id_pekerjaan; ?>"><?php echo $dpk->nama_pekerjaan; ?></option>
@@ -390,28 +476,60 @@ $(document).ready(function() {
             "url": "<?php echo site_url('calon/ajax_list')?>",
             "type": "POST",
             "data": function ( data ) {
-                data.nama_kec = $('#nama_kec').val();
+                data.kdkec = $('#kdkec').val();
+                data.kddesa = $('#kddesa').val();
                 data.nama_desa = $('#nama_desa').val();
+                data.nama_pendidikan = $('#nama_pendidikan').val();
+                data.nama_pekerjaan = $('#nama_pekerjaan').val();
+                data.kelamin = $('#kelamin').val();
+                data.agama = $('#agama').val();
+                data.photo = $("input:checkbox:checked").val();
             }
         },
 
         //Set column definition initialisation properties.
         "columnDefs": [
-            { 
-                "targets": [ -1 ], //last column
-                "orderable": false, //set not orderable
-            },
-            { 
-                "targets": [ -2 ], //2 last column (photo)
-                "orderable": false, //set not orderable
-            },
-        ],
+			{
+				"targets": [ 0 ], //first column / numbering column
+				"orderable": false, //set not orderable
+				responsivePriority: 1,
+				className: 'all'
+			},
+			{ 
+				targets:[ -1 ],
+				orderable: false,
+				responsivePriority: 2, 
+				className: 'all'
+			},
+			{
+				targets:[ 1 ], 
+				visible: false, 
+				className: 'never'
+			}
+		],
         aLengthMenu: [
                 [10, 25, 50, 100, 200, -1],
                 [10, 25, 50, 100, 200, "All"]
             ],
-            iDisplayLength: 10
+		iDisplayLength: 10,
+		"order": [[ 0, 'asc' ]],
+			drawCallback: function ( settings ) {
+				var api = this.api();
+				var rows = api.rows( {page:'current'} ).nodes();
+				var last=null;
+				api.column(1, {page:'current'} ).data().each( function ( group, i ) {
+				if ( last !== group ) {
+					$(rows).eq( i ).before(
+					'<tr class="bg-light-blue color-palette disabled"><td colspan="12"><b>'+group+'</b></td></tr>'
+					);
+
+				last = group;
+				}
+				} );
+			}
     });
+
+
 
     //datepicker
     $('.datepicker').datepicker({
@@ -427,10 +545,13 @@ $(document).ready(function() {
 
     $('#btn-filter').click(function(){ //button filter event click
         table.ajax.reload();  //just reload table
+        //alert($("input:checkbox:checked").val());
     });
 
     $('#btn-reset').click(function(){ //button reset event click
         $('#form-filter')[0].reset();
+        //$('#photo').prop('checked', false);
+        //$('#photo').iCheck('uncheck');
         table.ajax.reload();  //just reload table
     });
 
@@ -445,22 +566,35 @@ $(document).ready(function() {
     });
 
     $('textarea').keypress(function(event) {
-  if (event.which == 13) {
-    event.preventDefault();
-      var s = $(this).val();
-      $(this).val(s+"\n");
-  }
-});
-    $("select").change(function(){
+      if (event.which == 13) {
+        event.preventDefault();
+          var s = $(this).val();
+          $(this).val(s+"\n");
+      }
+    });
+
+    $("select2").change(function(){
         $(this).parent().parent().removeClass('has-error');
         $(this).next().empty();
     });
 
     //nested combobox
-    $("#id_kec").change(function (){
+    $("#kdkec").change(function (){
         var url = "<?php echo site_url('calon/add_ajax_desa');?>/"+$(this).val();
-        $('#id_desa').load(url);
+        $('#kddesa').load(url);
         return false;
+    });
+
+    $('input').iCheck({
+        checkboxClass: 'icheckbox_minimal-red',
+        radioClass: 'iradio_minimal-red',
+        increaseArea: '20%' // optional
+    });
+    
+    //iCheck for checkbox and radio inputs
+    $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+      checkboxClass: 'icheckbox_minimal-red',
+      radioClass: 'iradio_minimal-red'
     });
 
     $(document).on('click', '.panel-heading span.clickable', function(e){
