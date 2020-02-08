@@ -1,4 +1,4 @@
-# APLIKASI PILKADES SERENTAK (non e-Voting)
+# APLIKASI PILKADES SERENTAK
 
 Dibuat menggunakan:
 - Codeigniter
