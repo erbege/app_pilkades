@@ -33,14 +33,43 @@
           <span>Data Pokok </span>
         </a>
       </li>
-
+      
+      <?php
+      if ($this->session->userdata('id_role') == 3) {
+      ?>
       <li <?php if ($page == 'calon') {echo 'class="active"';} ?>>
         <a href="<?php echo base_url('calon'); ?>">
           <i class="fa fa-male"></i>
           <span>Daftar Calon</span>
         </a>
       </li> 
-      
+      <?php
+      }
+      ?>
+
+      <?php
+      if (($this->session->userdata('id_role') == 1) or ($this->session->userdata('id_role') == 2)) {
+      ?>
+      <li <?php if (($page == 'calon') || ($page == 'sebaran')) {echo 'class="treeview active"';} ?>>
+        <a href="#">
+          <i class="fa fa-male"></i>
+          <span>Calon Kades</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+        </a>
+        <ul class="treeview-menu">
+          <li <?php if ($page == 'calon') {echo 'class="active"';} ?>>
+              <a href="<?php echo base_url('calon'); ?>"><i class="fa fa-circle-o"></i> Daftar Calon</a>
+          </li>
+          <li <?php if ($page == 'sebaran') {echo 'class="active"';} ?>>
+              <a href="<?php echo base_url('sebaran'); ?>"><i class="fa fa-circle-o"></i> Sebaran</a>
+          </li>
+        </ul>
+      </li>
+      <?php
+      }
+      ?>
 
       <li class="header">HASIL PEMILIHAN</li>
       
@@ -77,9 +106,15 @@
           <span>Laporan Hasil Pilkades</span>
         </a>
       </li>
-        <?php
+      <li <?php if ($page == 'terpilih') {echo 'class="active"';} ?>>
+        <a href="<?php echo base_url('terpilih'); ?>">
+          <i class="fa fa-table"></i>
+          <span>Daftar Calon Terpilih</span>
+        </a>
+      </li>
+      <?php
       if (($this->session->userdata('id_role') == 1) or ($this->session->userdata('id_role') == 2)) {
-        ?>
+      ?>
 
       <li class="header">PENGATURAN</li>
       <li <?php if ($page == 'pengguna') {echo 'class="active"';} ?>>
