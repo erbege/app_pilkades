@@ -26,11 +26,12 @@ Fitur :
 DEMO
 ----
 http://www.bege.my.id/demo_pilkades/
-Admin:
+
+Admin Kabupaten:
 username: demo_admin
 password: demo_admin123
 
-User:
+User Kecamatan:
 username: demo_kec
 password: demo_kec123
 
