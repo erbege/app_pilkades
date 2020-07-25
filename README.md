@@ -23,6 +23,21 @@ Fitur :
 - Time Schedule (tahapan pengolahan data terjadwal)
   
 
+DEMO
+----
+http://www.bege.my.id/demo_pilkades/
+Admin:
+username: demo_admin
+password: demo_admin123
+
+User:
+username: demo_kec
+password: demo_kec123
+
+
+--------------------------
 Buy Me A Coffee :)
 IG: @kang.bege
 WA: +6282240998474
+
+
