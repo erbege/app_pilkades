@@ -37,12 +37,9 @@ password: demo_kec123
 
 
 --------------------------
-If you like my work could you please buy me a coffee :)
-
+buy me a coffee :)
 
 IG: @kang.bege
-
-WA: +6282240998474
 
 Thank you!
 
