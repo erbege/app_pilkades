@@ -23,10 +23,6 @@ Fitur :
 - Time Schedule (tahapan pengolahan data terjadwal)
   
 
-DEMO
-----
-http://www.bege.my.id/demo_pilkades/
-
 Admin Kabupaten:
 username: demo_admin
 password: demo_admin123
@@ -40,6 +36,7 @@ password: demo_kec123
 buy me a coffee :)
 
 IG: @kang.bege
+paypal.me/gunawan830
 
 Thank you!
 
